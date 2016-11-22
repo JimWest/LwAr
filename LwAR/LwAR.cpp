@@ -10,6 +10,7 @@
 #include "OpenGLRenderer.h"
 #include "Camera.h"
 #include "LwAR.h"
+#include "Object3d.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ using namespace std;
 
 int main()
 {
+
 	bool running = true;
 	OpenGLRenderer renderer = OpenGLRenderer();
 
@@ -32,14 +34,19 @@ int main()
 		return -1;
 	}
 
+	Object3d background = Object3d(Object3d::Quad);
+
 	// Create our cv::Mat objects
 	cv::Mat camFrame;
-	cv::Mat depthFrame;
+
+	renderer.PrepareTriangle();
 
 	while (!renderer.quit)
 	{
 		camFrame = cam.Retrieve();
-		renderer.Draw(camFrame);
+		//renderer.Draw(camFrame);
+
+		renderer.DrawTriangle();
 	}
 
 	return 0;

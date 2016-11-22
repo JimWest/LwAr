@@ -4,6 +4,7 @@
 #include <GL/glew.h>        
 #include <GLFW\glfw3.h>
 #include <iostream>
+#include <fstream>
 
 class OpenGLRenderer :
 	public Renderer
@@ -12,7 +13,10 @@ public:
 	OpenGLRenderer();
 	~OpenGLRenderer();
 
-	void Draw(cv::Mat & camFrame);		
+	void PrepareTriangle();
+	void DrawTriangle();
+	void Draw(cv::Mat & camFrame);
+	GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path);
 	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
 
 	bool quit = false;
@@ -20,17 +24,18 @@ public:
 private:
 
 	typedef unsigned int uint;
-
 	GLint   windowWidth = 640;     // Define our window width
 	GLint   windowHeight = 480;     // Define our window height
 	GLfloat fieldOfView = 45.0f;   // FoV
 	GLfloat zNear = 0.1f;    // Near clip plane
 	GLfloat zFar = 200.0f;  // Far clip plane
-
 	int    frameCount = 0;
 	double frameStartTime, frameEndTime, frameDrawTime;
-
 	GLFWwindow  *window;
+	GLuint programID;
+
+	// This will identify our vertex buffer
+	GLuint vertexbuffer;
 
 	void InitGL();
 	static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
