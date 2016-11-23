@@ -22,18 +22,13 @@ void OpenGLRenderer::key_callback(GLFWwindow* window, int key, int scancode, int
 
 void OpenGLRenderer::InitGL()
 {
-	// Define our buffer settings
-	int redBits = 8, greenBits = 8, blueBits = 8;
-	int alphaBits = 8, depthBits = 24, stencilBits = 8;
-
 	// Initialise glfw
 	glfwInit();
 
+	// Create a window
 	window = glfwCreateWindow(windowWidth, windowHeight, "OpenCV / OpenNI Sensor Data to Texture | r3dux", NULL, NULL);
-
 	glfwMakeContextCurrent(window);
 
-	// Create a window
 	if (!window)
 	{
 		cout << "Failed to open window!" << endl;
@@ -97,10 +92,13 @@ void OpenGLRenderer::PrepareTriangle()
 
 	// An array of 3 vectors which represents 3 vertices
 	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f,
+		-1.0, -1.0,  1.0,
+		1.0, -1.0,  1.0,
+		1.0,  1.0,  1.0,
+		-1.0,  1.0,  1.0,
 	};
+
+
 
 	// Generate 1 buffer, put the resulting identifier in vertexbuffer
 	glGenBuffers(1, &vertexbuffer);
@@ -129,7 +127,7 @@ void OpenGLRenderer::DrawTriangle()
 		(void*)0            // array buffer offset
 	);
 	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+	glDrawArrays(GL_TRIANGLES, 0, 4); // Starting from vertex 0; 3 vertices total -> 1 triangle
 	glDisableVertexAttribArray(0);
 
 	glfwSwapBuffers(window);
