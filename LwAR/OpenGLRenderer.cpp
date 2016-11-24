@@ -74,22 +74,17 @@ void OpenGLRenderer::InitGL()
 	// ----- OpenGL settings -----
 
 	glDepthFunc(GL_LEQUAL);		// Specify depth function to use
-
 	glEnable(GL_DEPTH_TEST);    // Enable the depth buffer
-
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // Ask for nicest perspective correction
-
 	glEnable(GL_CULL_FACE);     // Cull back facing polygons
-
 	glfwSwapInterval(1);        // Lock screen updates to vertical refresh
-
 								// Switch to ModelView matrix and reset
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set our clear colour to black
 
-	programID = LoadShaders("shaders/SimpleVertexShader.vertexshader", "shaders/SimpleFragmentShader.fragmentshader");
+	programID = LoadShaders("shaders/VertexShader.vertexshader", "shaders/FragmentShader.fragmentshader");
 }
 
 void OpenGLRenderer::PrepareTriangle()
@@ -98,14 +93,14 @@ void OpenGLRenderer::PrepareTriangle()
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// An array of 3 vectors which represents 3 vertices
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0, -1.0,  1.0,
-		1.0, -1.0,  1.0,
-		1.0,  1.0,  1.0,
-		-1.0,  1.0,  1.0,
+	// An array of 3 vectors which represents 3 vertices	
+	GLfloat vertexData[] = {
+		//  X     Y     Z       U     V
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,   1.0f, 0.0f,
+		1.0f, 1.0, 0.0f,   1.0f, 1.0f,
+		-1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
 	};
-
 
 
 	// Generate 1 buffer, put the resulting identifier in vertexbuffer
@@ -113,30 +108,62 @@ void OpenGLRenderer::PrepareTriangle()
 	// The following commands will talk about our 'vertexbuffer' buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
+	// Retrieve the vertex location in the program.
+	GLint vertLoc = glGetAttribLocation(programID, "vert");
+
+	// connect the xyz to the "vert" attribute of the vertex shader
+	glEnableVertexAttribArray(vertLoc);
+	glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), NULL);
+
+	// Retrieve the vertex location in the program.
+	GLint vertCoordLoc = glGetAttribLocation(programID, "vertTexCoord");
+
+	// connect the uv coords to the "vertTexCoord" attribute of the vertex shader
+	glEnableVertexAttribArray(vertCoordLoc);
+	glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
+
+
+	glUseProgram(programID);
 }
 
-void OpenGLRenderer::DrawTriangle()
+void OpenGLRenderer::DrawTriangle(cv::Mat &camFrame)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(programID);
 
-	// 1rst attribute buffer : vertices
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
+	//// 1rst attribute buffer : vertices
+	//glEnableVertexAttribArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	//glVertexAttribPointer(
+	//	0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+	//	3,                  // size
+	//	GL_FLOAT,           // type
+	//	GL_FALSE,           // normalized?
+	//	0,                  // stride
+	//	(void*)0            // array buffer offset
+	//);
+
+
+	// Convert image and depth data to OpenGL textures
+	GLuint imageTex = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
+
+	// Draw the textures
+	// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.
+
+	// Front facing texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, imageTex);
+	GLint texLocation = glGetUniformLocation(programID, "tex");
+	glUniform1i(texLocation, GL_TEXTURE0);
+
 	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 4); // Starting from vertex 0; 3 vertices total -> 1 triangle
-	glDisableVertexAttribArray(0);
+	glDrawArrays(GL_QUADS, 0, 4); // Starting from vertex 0; 3 vertices total -> 1 triangle
+
+	// Free the texture memory
+	glDeleteTextures(1, &imageTex);
+	glDisable(GL_TEXTURE_2D);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -292,6 +319,10 @@ GLuint OpenGLRenderer::LoadShaders(const char * vertex_file_path, const char * f
 // returns the ID of the generated OpenGL Texture
 GLuint OpenGLRenderer::matToTexture(cv::Mat & mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter)
 {
+	// OpenCV stores image from top to buttom, OpenGL the oppsite so flip it
+	cv::flip(mat, mat, 0);
+	//image = flipped;              //maybe just cv::flip(image, image, 0)?
+
 	// Generate a number for our textureID's unique handle
 	GLuint textureID;
 	glGenTextures(1, &textureID);

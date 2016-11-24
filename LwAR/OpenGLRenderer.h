@@ -21,7 +21,7 @@ public:
 	~OpenGLRenderer();
 
 	void PrepareTriangle();
-	void DrawTriangle();
+	void DrawTriangle(cv::Mat &camFrame);
 	void Draw(cv::Mat & camFrame);
 	GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path);
 	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);

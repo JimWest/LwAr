@@ -44,9 +44,11 @@ int main()
 	while (!renderer.quit)
 	{
 		camFrame = cam.Retrieve();
+		// mirror on y axis so its like a mirror
+		cv::flip(camFrame, camFrame, 1);
 		//renderer.Draw(camFrame);
 
-		renderer.DrawTriangle();
+		renderer.DrawTriangle(camFrame);
 	}
 
 	return 0;
