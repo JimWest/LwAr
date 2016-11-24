@@ -21,7 +21,7 @@ int main()
 {
 
 	bool running = true;
-	OpenGLRenderer renderer = OpenGLRenderer();
+	OpenGLRenderer renderer = OpenGLRenderer(640, 480, "Augmented Reality Test");
 
 	// Create a our video capture using the Kinect and OpenNI
 	// Note: To use the cv::VideoCapture class you MUST link in the highgui lib (libopencv_highgui.so)

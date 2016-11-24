@@ -3,3 +3,7 @@
 /ipch
 /LwAR/opencv2
 /LwAR/Debug
+/Debug/*.pdb
+/Debug/*.exe
+/Debug/*.ilk
+/.vs

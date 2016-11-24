@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Hand-OpenGL.cpp" />
     <ClCompile Include="LwAR.cpp" />
     <ClCompile Include="Marker.cpp" />
     <ClCompile Include="Object3d.cpp" />

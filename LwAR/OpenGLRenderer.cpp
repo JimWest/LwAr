@@ -7,6 +7,14 @@ OpenGLRenderer::OpenGLRenderer()
 	InitGL();
 }
 
+OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle)
+{
+	this->windowWidth = windowWidth;
+	this->windowHeight = windowHeight;
+	this->windowTitle = windowTitle;
+	InitGL();
+}
+
 
 OpenGLRenderer::~OpenGLRenderer()
 {
@@ -26,7 +34,7 @@ void OpenGLRenderer::InitGL()
 	glfwInit();
 
 	// Create a window
-	window = glfwCreateWindow(windowWidth, windowHeight, "OpenCV / OpenNI Sensor Data to Texture | r3dux", NULL, NULL);
+	window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
 	glfwMakeContextCurrent(window);
 
 	if (!window)
@@ -281,6 +289,7 @@ GLuint OpenGLRenderer::LoadShaders(const char * vertex_file_path, const char * f
 	return ProgramID;
 }
 
+// returns the ID of the generated OpenGL Texture
 GLuint OpenGLRenderer::matToTexture(cv::Mat & mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter)
 {
 	// Generate a number for our textureID's unique handle
