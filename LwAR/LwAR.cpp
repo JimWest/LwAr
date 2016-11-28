@@ -54,10 +54,12 @@ int main()
 			cv::flip(camFrame, camFrame, 1);
 		}
 
-		//renderer.Draw(camFrame);
+		renderer.PreDraw();
 
 		renderer.DrawObject(&background, camFrame);
 		renderer.DrawObject(&triangle, camFrame);
+
+		renderer.PostDraw();
 	}
 
 	return 0;

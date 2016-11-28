@@ -22,7 +22,9 @@ public:
 	~OpenGLRenderer();
 
 	void PrepareObject(const Object3d* object);
+	void PreDraw();
 	void DrawObject(Object3d* object, cv::Mat &camFrame);
+	void PostDraw();
 	void Draw(cv::Mat & camFrame);
 	GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path);
 	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);

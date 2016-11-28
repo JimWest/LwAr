@@ -169,11 +169,17 @@ void OpenGLRenderer::PrepareObject(const Object3d* object)
 //	glUseProgram(programID);
 //}
 
-void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
+int i = 0;
+
+void OpenGLRenderer::PreDraw()
 {
 	quit = glfwWindowShouldClose(window);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
+{
+
 
 	// Convert image and depth data to OpenGL textures
 	GLuint imageTex = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
@@ -187,6 +193,10 @@ void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 	GLint texLocation = glGetUniformLocation(programID, "tex");
 	glUniform1i(texLocation, GL_TEXTURE0);
 
+	glTranslatef(0, 0, i);
+
+	i--;
+
 	glBindVertexArray((GLuint)object->vao);
 	// Draw the object 
 	glDrawArrays(GL_QUADS, 0, 4);
@@ -197,6 +207,11 @@ void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 	glDeleteTextures(1, &imageTex);
 	glDisable(GL_TEXTURE_2D);
 
+
+}
+
+void OpenGLRenderer::PostDraw()
+{
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }
