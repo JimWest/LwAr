@@ -14,6 +14,8 @@
 
 using namespace std;
 
+int width = 640;
+int height = 480;
 
 // TODO: Auto copy needed dlls into the output folder
 
@@ -21,34 +23,41 @@ int main()
 {
 
 	bool running = true;
-	OpenGLRenderer renderer = OpenGLRenderer(640, 480, "Augmented Reality Test");
+	cv::Mat camFrame;
+	OpenGLRenderer renderer = OpenGLRenderer(width, height, "Augmented Reality Test");
 
 	// Create a our video capture using the Kinect and OpenNI
 	// Note: To use the cv::VideoCapture class you MUST link in the highgui lib (libopencv_highgui.so)
 	cout << "Opening Webcam device ..." << endl;
 
-	Camera cam = Camera(0, 640, 480, 30);
+	Camera cam = Camera(0, width, height, 60);
 	if (!cam.isOpened)
 	{
 		cout << "Error openeing camera" << endl;
-		return -1;
+		//return -1;
+
+		camFrame = cv::imread("lena1.png",1);
 	}
-
+	
 	Object3d background = Object3d(Object3d::Quad);
+	Object3d triangle = Object3d(Object3d::Triangle);
 
-	// Create our cv::Mat objects
-	cv::Mat camFrame;
-
-	renderer.PrepareTriangle();
+	renderer.PrepareObject(&background);
+	renderer.PrepareObject(&triangle);
 
 	while (!renderer.quit)
 	{
-		camFrame = cam.Retrieve();
-		// mirror on y axis so its like a mirror
-		cv::flip(camFrame, camFrame, 1);
+		if (cam.isOpened)
+		{
+			camFrame = cam.Retrieve();		
+			// mirror on y axis so its like a mirror
+			cv::flip(camFrame, camFrame, 1);
+		}
+
 		//renderer.Draw(camFrame);
 
-		renderer.DrawTriangle(camFrame);
+		renderer.DrawObject(&background, camFrame);
+		renderer.DrawObject(&triangle, camFrame);
 	}
 
 	return 0;

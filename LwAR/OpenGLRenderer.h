@@ -4,13 +4,14 @@
 #include <fstream>
 #include <string>
 #include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
 #include <GL/glew.h>        
 #include <GLFW\glfw3.h>
 #include <vec3.hpp> // glm::vec3
 #include <vec4.hpp> // glm::vec4
 #include <mat4x4.hpp> // glm::mat4
 #include <gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
-
+#include "Object3d.h"
 
 class OpenGLRenderer :
 	public Renderer
@@ -20,8 +21,8 @@ public:
 	OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
 	~OpenGLRenderer();
 
-	void PrepareTriangle();
-	void DrawTriangle(cv::Mat &camFrame);
+	void PrepareObject(const Object3d* object);
+	void DrawObject(Object3d* object, cv::Mat &camFrame);
 	void Draw(cv::Mat & camFrame);
 	GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path);
 	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
@@ -41,10 +42,9 @@ private:
 	GLFWwindow  *window;
 	GLuint programID;
 
-	// This will identify our vertex buffer
-	GLuint vertexbuffer;
-
 	void InitGL();
 	static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
+	static void window_size_callback(GLFWwindow * window, int width, int height);
+	static void framebuffer_size_callback(GLFWwindow * window, int width, int height);
 };
 

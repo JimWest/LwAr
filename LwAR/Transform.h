@@ -1,7 +1,16 @@
+#pragma once
+#include <vec3.hpp> // glm::vec3
+#include <vec4.hpp> // glm::vec4
+#include <mat4x4.hpp> // glm::mat4
+#include <gtc/quaternion.hpp>
 
 class Transform
 {
 public:
 	Transform();
 	~Transform();
+
+	glm::vec3 translation;
+	glm::quat rotation;
+	glm::vec3 scale;
 };

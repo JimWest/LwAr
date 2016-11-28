@@ -14,6 +14,8 @@ public:
 	bool isOpened;
 
 private:
+	int width, height, fps;
+
 	cv::VideoCapture capture;
 };
 

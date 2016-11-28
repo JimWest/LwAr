@@ -28,6 +28,15 @@ void OpenGLRenderer::key_callback(GLFWwindow* window, int key, int scancode, int
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+void OpenGLRenderer::window_size_callback(GLFWwindow* window, int width, int height)
+{
+}
+
+void OpenGLRenderer::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
 void OpenGLRenderer::InitGL()
 {
 	// Initialise glfw
@@ -46,6 +55,8 @@ void OpenGLRenderer::InitGL()
 
 	// Specify the callback function for key presses/releases
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetWindowSizeCallback(window, window_size_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	//  Initialise glew (must occur AFTER window creation or glew will error)
 	GLenum err = glewInit();
@@ -87,28 +98,17 @@ void OpenGLRenderer::InitGL()
 	programID = LoadShaders("shaders/VertexShader.vertexshader", "shaders/FragmentShader.fragmentshader");
 }
 
-void OpenGLRenderer::PrepareTriangle()
+void OpenGLRenderer::PrepareObject(const Object3d* object)
 {
-	GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	// An array of 3 vectors which represents 3 vertices	
-	GLfloat vertexData[] = {
-		//  X     Y     Z       U     V
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,   1.0f, 0.0f,
-		1.0f, 1.0, 0.0f,   1.0f, 1.0f,
-		-1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
-	};
-
+	glGenVertexArrays(1, &(GLuint)object->vao);
+	glBindVertexArray((GLuint)object->vao);
 
 	// Generate 1 buffer, put the resulting identifier in vertexbuffer
-	glGenBuffers(1, &vertexbuffer);
+	glGenBuffers(1, &(GLuint)object->vbo);
 	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)object->vao);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(float), &object->vertices.front(), GL_STATIC_DRAW);
 
 	// Retrieve the vertex location in the program.
 	GLint vertLoc = glGetAttribLocation(programID, "vert");
@@ -124,27 +124,56 @@ void OpenGLRenderer::PrepareTriangle()
 	glEnableVertexAttribArray(vertCoordLoc);
 	glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
 
-
 	glUseProgram(programID);
 }
+//
+//void OpenGLRenderer::PrepareObject(const Object3d* object)
+//{
+//	glGenVertexArrays(1, &this->VAO);
+//	glGenBuffers(1, &this->VBO);
+//	glGenBuffers(1, &this->EBO);
+//
+//	glBindVertexArray(this->VAO);
+//	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+//
+//	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(Vertex),
+//		&object->vertices[0], GL_STATIC_DRAW);
+//
+//	GLint vertLoc = glGetAttribLocation(programID, "vert");
+//	GLint vertCoordLoc = glGetAttribLocation(programID, "vertTexCoord");
+//
+//	// Vertex Positions
+//	glEnableVertexAttribArray(vertLoc);
+//	glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+//		(GLvoid*)0);
+//	// Vertex Normals
+//	//glEnableVertexAttribArray(1);
+//	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+//	//	(GLvoid*)offsetof(Vertex, Normal));
+//
+//	// Vertex Texture Coords
+//	glEnableVertexAttribArray(vertCoordLoc);
+//	glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+//		(GLvoid*)offsetof(Vertex, TexCoords));
+//
+//	//// connect the xyz to the "vert" attribute of the vertex shader
+//	//glEnableVertexAttribArray(vertLoc);
+//	//glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), NULL);
+//
+//
+//	//// connect the uv coords to the "vertTexCoord" attribute of the vertex shader
+//	//glEnableVertexAttribArray(vertCoordLoc);
+//	//glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
+//
+//	glBindVertexArray(0);
+//	glUseProgram(programID);
+//}
 
-void OpenGLRenderer::DrawTriangle(cv::Mat &camFrame)
+void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 {
+	quit = glfwWindowShouldClose(window);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-	//// 1rst attribute buffer : vertices
-	//glEnableVertexAttribArray(0);
-	//glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	//glVertexAttribPointer(
-	//	0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-	//	3,                  // size
-	//	GL_FLOAT,           // type
-	//	GL_FALSE,           // normalized?
-	//	0,                  // stride
-	//	(void*)0            // array buffer offset
-	//);
-
 
 	// Convert image and depth data to OpenGL textures
 	GLuint imageTex = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
@@ -158,8 +187,11 @@ void OpenGLRenderer::DrawTriangle(cv::Mat &camFrame)
 	GLint texLocation = glGetUniformLocation(programID, "tex");
 	glUniform1i(texLocation, GL_TEXTURE0);
 
-	// Draw the triangle !
-	glDrawArrays(GL_QUADS, 0, 4); // Starting from vertex 0; 3 vertices total -> 1 triangle
+	glBindVertexArray((GLuint)object->vao);
+	// Draw the object 
+	glDrawArrays(GL_QUADS, 0, 4);
+
+	glBindVertexArray(0);
 
 	// Free the texture memory
 	glDeleteTextures(1, &imageTex);
@@ -320,8 +352,8 @@ GLuint OpenGLRenderer::LoadShaders(const char * vertex_file_path, const char * f
 GLuint OpenGLRenderer::matToTexture(cv::Mat & mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter)
 {
 	// OpenCV stores image from top to buttom, OpenGL the oppsite so flip it
-	cv::flip(mat, mat, 0);
-	//image = flipped;              //maybe just cv::flip(image, image, 0)?
+	cv::Mat flippedMat;
+	cv::flip(mat, flippedMat, 0);
 
 	// Generate a number for our textureID's unique handle
 	GLuint textureID;
@@ -367,7 +399,7 @@ GLuint OpenGLRenderer::matToTexture(cv::Mat & mat, GLenum minFilter, GLenum magF
 		0,                 // Border width in pixels (can either be 1 or 0)
 		inputColourFormat, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
 		GL_UNSIGNED_BYTE,  // Image data type
-		mat.ptr());        // The actual image data itself
+		flippedMat.ptr());        // The actual image data itself
 
 						   // If we're using mipmaps then generate them. Note: This requires OpenGL 3.0 or higher
 	if (minFilter == GL_LINEAR_MIPMAP_LINEAR ||
