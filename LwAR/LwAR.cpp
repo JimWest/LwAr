@@ -55,9 +55,9 @@ int main()
 		}
 
 		renderer.PreDraw();
-
+		
 		renderer.DrawObject(&background, camFrame);
-		renderer.DrawObject(&triangle, camFrame);
+		renderer.DrawObject(&triangle, camFrame);		
 
 		renderer.PostDraw();
 	}

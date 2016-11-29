@@ -95,7 +95,8 @@ void OpenGLRenderer::InitGL()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set our clear colour to black
 
-	programID = LoadShaders("shaders/VertexShader.vertexshader", "shaders/FragmentShader.fragmentshader");
+	//programID = LoadShaders("shaders/VertexShader.vertexshader", "shaders/FragmentShader.fragmentshader");
+	programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardShading.fragmentshader");
 }
 
 void OpenGLRenderer::PrepareObject(const Object3d* object)
@@ -103,71 +104,31 @@ void OpenGLRenderer::PrepareObject(const Object3d* object)
 	glGenVertexArrays(1, &(GLuint)object->vao);
 	glBindVertexArray((GLuint)object->vao);
 
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer
 	glGenBuffers(1, &(GLuint)object->vbo);
-	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)object->vao);
-	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(float), &object->vertices.front(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, object->vbo);
+	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(float), &object->vertices[0], GL_STATIC_DRAW);
 
-	// Retrieve the vertex location in the program.
-	GLint vertLoc = glGetAttribLocation(programID, "vert");
+	GLuint uvbuffer;
+	glGenBuffers(1, & (GLuint)object->uvbo);
+	glBindBuffer(GL_ARRAY_BUFFER, object->uvbo);
+	glBufferData(GL_ARRAY_BUFFER, object->uvs.size() * sizeof(float), &object->uvs[0], GL_STATIC_DRAW);
 
-	// connect the xyz to the "vert" attribute of the vertex shader
-	glEnableVertexAttribArray(vertLoc);
-	glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), NULL);
+	//// Retrieve the vertex location in the program.
+	//GLint vertLoc = glGetAttribLocation(programID, "vert");
 
-	// Retrieve the vertex location in the program.
-	GLint vertCoordLoc = glGetAttribLocation(programID, "vertTexCoord");
+	//// connect the xyz to the "vert" attribute of the vertex shader
+	//glEnableVertexAttribArray(vertLoc);
+	//glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), NULL);
 
-	// connect the uv coords to the "vertTexCoord" attribute of the vertex shader
-	glEnableVertexAttribArray(vertCoordLoc);
-	glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
+	//// Retrieve the vertex location in the program.
+	//GLint vertCoordLoc = glGetAttribLocation(programID, "vertTexCoord");
+
+	//// connect the uv coords to the "vertTexCoord" attribute of the vertex shader
+	//glEnableVertexAttribArray(vertCoordLoc);
+	//glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
 
 	glUseProgram(programID);
 }
-//
-//void OpenGLRenderer::PrepareObject(const Object3d* object)
-//{
-//	glGenVertexArrays(1, &this->VAO);
-//	glGenBuffers(1, &this->VBO);
-//	glGenBuffers(1, &this->EBO);
-//
-//	glBindVertexArray(this->VAO);
-//	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-//
-//	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(Vertex),
-//		&object->vertices[0], GL_STATIC_DRAW);
-//
-//	GLint vertLoc = glGetAttribLocation(programID, "vert");
-//	GLint vertCoordLoc = glGetAttribLocation(programID, "vertTexCoord");
-//
-//	// Vertex Positions
-//	glEnableVertexAttribArray(vertLoc);
-//	glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-//		(GLvoid*)0);
-//	// Vertex Normals
-//	//glEnableVertexAttribArray(1);
-//	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-//	//	(GLvoid*)offsetof(Vertex, Normal));
-//
-//	// Vertex Texture Coords
-//	glEnableVertexAttribArray(vertCoordLoc);
-//	glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-//		(GLvoid*)offsetof(Vertex, TexCoords));
-//
-//	//// connect the xyz to the "vert" attribute of the vertex shader
-//	//glEnableVertexAttribArray(vertLoc);
-//	//glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), NULL);
-//
-//
-//	//// connect the uv coords to the "vertTexCoord" attribute of the vertex shader
-//	//glEnableVertexAttribArray(vertCoordLoc);
-//	//glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
-//
-//	glBindVertexArray(0);
-//	glUseProgram(programID);
-//}
 
 int i = 0;
 
@@ -180,31 +141,90 @@ void OpenGLRenderer::PreDraw()
 void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 {
 
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Use our shader
+	//glUseProgram(programID);
+
+	// Camera matrix
+	glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	// modell matrix
+	glm::mat4 identyMatrix = glm::mat4(1.0f);
+	glm::mat4 translationMatrix = glm::translate(identyMatrix, object->transform.translation);
+	glm::mat4 scaleMatrix = glm::scale(identyMatrix, object->transform.scale);
+	//glm::mat4 rotationMatrix = glm::quat::toMat4(quaternion);
+	glm::mat4 rotationMatrix = identyMatrix;
+	glm::mat4 modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+	
+
+	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * modelMatrix;
+
+	// set the matrix paremters on the shader
+	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
+	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
+	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+
+	// set the light position in the shader
+	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	glm::vec3 lightPos = glm::vec3(4, 4, 4);
+	glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 	// Convert image and depth data to OpenGL textures
-	GLuint imageTex = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
+	GLuint textureID = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
 
 	// Draw the textures
 	// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.
 
 	// Front facing texture
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, imageTex);
-	GLint texLocation = glGetUniformLocation(programID, "tex");
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glUniform1i(textureID, 0);
+
+	GLint texLocation = glGetUniformLocation(programID, "myTextureSampler");
 	glUniform1i(texLocation, GL_TEXTURE0);
 
-	glTranslatef(0, 0, i);
-
-	i--;
-
 	glBindVertexArray((GLuint)object->vao);
-	// Draw the object 
-	glDrawArrays(GL_QUADS, 0, 4);
 
-	glBindVertexArray(0);
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, object->vbo);
+	glVertexAttribPointer(
+		0,                  // attribute
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
+
+	// 2nd attribute buffer : UVs
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, object->uvbo);
+	glVertexAttribPointer(
+		1,                                // attribute
+		2,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+	);
+
+	// Draw the object
+	glDrawArrays(GL_TRIANGLE_FAN, 0, (object->vertices.size() ));
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
 	// Free the texture memory
-	glDeleteTextures(1, &imageTex);
+	glDeleteTextures(1, &textureID);
 	glDisable(GL_TEXTURE_2D);
 
 

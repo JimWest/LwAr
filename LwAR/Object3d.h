@@ -18,6 +18,7 @@ public:
 	~Object3d();
 
 	std::vector<float> vertices;
+	std::vector<float> uvs;
 	Transform transform;
-	uint32_t vao, vbo;
+	uint32_t vao, vbo, uvbo;
 };
