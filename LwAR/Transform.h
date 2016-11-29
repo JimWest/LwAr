@@ -3,6 +3,7 @@
 #include <vec4.hpp> // glm::vec4
 #include <mat4x4.hpp> // glm::mat4
 #include <gtc/quaternion.hpp>
+#include <gtx/euler_angles.hpp>
 
 class Transform
 {

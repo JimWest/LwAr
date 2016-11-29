@@ -4,7 +4,7 @@ using namespace std;
 
 OpenGLRenderer::OpenGLRenderer()
 {
-	InitGL();
+	initGL();
 }
 
 OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle)
@@ -12,7 +12,7 @@ OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string wi
 	this->windowWidth = windowWidth;
 	this->windowHeight = windowHeight;
 	this->windowTitle = windowTitle;
-	InitGL();
+	initGL();
 }
 
 
@@ -22,22 +22,22 @@ OpenGLRenderer::~OpenGLRenderer()
 }
 
 
-void OpenGLRenderer::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void OpenGLRenderer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-void OpenGLRenderer::window_size_callback(GLFWwindow* window, int width, int height)
+void OpenGLRenderer::windowSizeCallback(GLFWwindow* window, int width, int height)
 {
 }
 
-void OpenGLRenderer::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void OpenGLRenderer::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
-void OpenGLRenderer::InitGL()
+void OpenGLRenderer::initGL()
 {
 	// Initialise glfw
 	glfwInit();
@@ -54,11 +54,11 @@ void OpenGLRenderer::InitGL()
 	}
 
 	// Specify the callback function for key presses/releases
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetWindowSizeCallback(window, window_size_callback);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetWindowSizeCallback(window, windowSizeCallback);
+	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-	//  Initialise glew (must occur AFTER window creation or glew will error)
+	//  Initialise glew (must occur after window creation or glew will error)
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
@@ -83,23 +83,22 @@ void OpenGLRenderer::InitGL()
 	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 
 	// ----- OpenGL settings -----
-
-	glDepthFunc(GL_LEQUAL);		// Specify depth function to use
-	glEnable(GL_DEPTH_TEST);    // Enable the depth buffer
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // Ask for nicest perspective correction
-	glEnable(GL_CULL_FACE);     // Cull back facing polygons
-	glfwSwapInterval(1);        // Lock screen updates to vertical refresh
-								// Switch to ModelView matrix and reset
+	glDepthFunc(GL_LEQUAL);		
+	glEnable(GL_DEPTH_TEST);    
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable(GL_CULL_FACE);     
+	glfwSwapInterval(1);        
+								
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set our clear colour to black
 
 	//programID = LoadShaders("shaders/VertexShader.vertexshader", "shaders/FragmentShader.fragmentshader");
-	programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardShading.fragmentshader");
+	programID = loadShaders("shaders/StandardShading.vertexshader", "shaders/StandardShading.fragmentshader");
 }
 
-void OpenGLRenderer::PrepareObject(const Object3d* object)
+void OpenGLRenderer::initObject(const Object3d* object)
 {
 	glGenVertexArrays(1, &(GLuint)object->vao);
 	glBindVertexArray((GLuint)object->vao);
@@ -109,7 +108,7 @@ void OpenGLRenderer::PrepareObject(const Object3d* object)
 	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(float), &object->vertices[0], GL_STATIC_DRAW);
 
 	GLuint uvbuffer;
-	glGenBuffers(1, & (GLuint)object->uvbo);
+	glGenBuffers(1, &(GLuint)object->uvbo);
 	glBindBuffer(GL_ARRAY_BUFFER, object->uvbo);
 	glBufferData(GL_ARRAY_BUFFER, object->uvs.size() * sizeof(float), &object->uvs[0], GL_STATIC_DRAW);
 
@@ -132,24 +131,22 @@ void OpenGLRenderer::PrepareObject(const Object3d* object)
 
 int i = 0;
 
-void OpenGLRenderer::PreDraw()
+void OpenGLRenderer::preDraw()
 {
 	quit = glfwWindowShouldClose(window);
+	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
+void OpenGLRenderer::drawObject(Object3d* object, cv::Mat &camFrame)
 {
-
-	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Use our shader
 	//glUseProgram(programID);
 
 	// Camera matrix
-	glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -157,25 +154,23 @@ void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 	glm::mat4 identyMatrix = glm::mat4(1.0f);
 	glm::mat4 translationMatrix = glm::translate(identyMatrix, object->transform.translation);
 	glm::mat4 scaleMatrix = glm::scale(identyMatrix, object->transform.scale);
-	//glm::mat4 rotationMatrix = glm::quat::toMat4(quaternion);
-	glm::mat4 rotationMatrix = identyMatrix;
+	glm::mat4 rotationMatrix = glm::toMat4(object->transform.rotation);
 	glm::mat4 modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-	
 
-	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * modelMatrix;
+	glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 
 	// set the matrix paremters on the shader
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-	glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+	GLuint matrixID = glGetUniformLocation(programID, "MVP");
+	GLuint viewMatrixID = glGetUniformLocation(programID, "V");
+	GLuint modelMatrixID = glGetUniformLocation(programID, "M");
+	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
+	glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]);
 
 	// set the light position in the shader
-	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	GLuint lightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 	glm::vec3 lightPos = glm::vec3(4, 4, 4);
-	glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+	glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
 
 	// Convert image and depth data to OpenGL textures
 	GLuint textureID = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
@@ -196,29 +191,15 @@ void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, object->vbo);
-	glVertexAttribPointer(
-		0,                  // attribute
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// 2nd attribute buffer : UVs
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, object->uvbo);
-	glVertexAttribPointer(
-		1,                                // attribute
-		2,                                // size
-		GL_FLOAT,                         // type
-		GL_FALSE,                         // normalized?
-		0,                                // stride
-		(void*)0                          // array buffer offset
-	);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// Draw the object
-	glDrawArrays(GL_TRIANGLE_FAN, 0, (object->vertices.size() ));
+	glDrawArrays(GL_TRIANGLE_FAN, 0, (object->vertices.size()));
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -226,73 +207,15 @@ void OpenGLRenderer::DrawObject(Object3d* object, cv::Mat &camFrame)
 	// Free the texture memory
 	glDeleteTextures(1, &textureID);
 	glDisable(GL_TEXTURE_2D);
-
-
 }
 
-void OpenGLRenderer::PostDraw()
+void OpenGLRenderer::postDraw()
 {
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }
 
-void OpenGLRenderer::Draw(cv::Mat &camFrame)
-{
-	quit = glfwWindowShouldClose(window);
-
-	// Clear the screen and depth buffer, and reset the ModelView matrix to identity
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-
-	// Move things back into the screen
-	glTranslatef(0.0f, 0.0f, -8.0f);
-
-	// Rotate around the y-axis
-	glRotatef(frameCount, 0.0f, 1.0f, 0.0f);
-
-	// Rotate around the x-axis
-	static float rateOfChange = 0.01f;
-	static float degreesToMoveThrough = 180.0f;
-	glRotatef(sin(frameCount * rateOfChange) * degreesToMoveThrough, 1.0f, 0.0f, 0.0f);
-
-	// Rotate around the z-axis
-	glRotatef(cos(frameCount * rateOfChange) * degreesToMoveThrough, 0.0f, 1.0f, 0.0f);
-
-	glEnable(GL_TEXTURE_2D);
-
-	// Quad width and height
-	float w = 6.4f;
-	float h = 4.8f;
-
-	// Convert image and depth data to OpenGL textures
-	GLuint imageTex = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
-
-	// Draw the textures
-	// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.
-
-	// Front facing texture
-	glBindTexture(GL_TEXTURE_2D, imageTex);
-	glBegin(GL_QUADS);
-	glTexCoord2f(1, 1);
-	glVertex2f(-w / 2, h / 2);
-	glTexCoord2f(0, 1);
-	glVertex2f(w / 2, h / 2);
-	glTexCoord2f(0, 0);
-	glVertex2f(w / 2, -h / 2);
-	glTexCoord2f(1, 0);
-	glVertex2f(-w / 2, -h / 2);
-	glEnd();
-
-	// Free the texture memory
-	glDeleteTextures(1, &imageTex);
-
-	glDisable(GL_TEXTURE_2D);
-
-	glfwSwapBuffers(window);
-	glfwPollEvents();
-}
-
-GLuint OpenGLRenderer::LoadShaders(const char * vertex_file_path, const char * fragment_file_path) {
+GLuint OpenGLRenderer::loadShaders(const char * vertex_file_path, const char * fragment_file_path) {
 
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);

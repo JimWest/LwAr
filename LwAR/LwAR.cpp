@@ -40,10 +40,14 @@ int main()
 	}
 	
 	Object3d background = Object3d(Object3d::Quad);
-	Object3d triangle = Object3d(Object3d::Triangle);
+	Object3d cube = Object3d(Object3d::Cube);
 
-	renderer.PrepareObject(&background);
-	renderer.PrepareObject(&triangle);
+	renderer.initObject(&background);
+	renderer.initObject(&cube);
+	
+	cube.transform.translation = glm::vec3(-0.2f, 0.1f, 0.1f);
+	cube.transform.scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	cube.transform.rotation = glm::quat(glm::vec3(10, 10, 10));
 
 	while (!renderer.quit)
 	{
@@ -54,14 +58,17 @@ int main()
 			cv::flip(camFrame, camFrame, 1);
 		}
 
-		renderer.PreDraw();
+		renderer.preDraw();
 		
-		renderer.DrawObject(&background, camFrame);
-		renderer.DrawObject(&triangle, camFrame);		
+		renderer.drawObject(&background, camFrame);
 
-		renderer.PostDraw();
+		renderer.drawObject(&cube, camFrame);
+
+		renderer.postDraw();
 	}
 
 	return 0;
 }
+
+
 

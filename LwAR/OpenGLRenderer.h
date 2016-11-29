@@ -7,10 +7,15 @@
 #include "opencv2/highgui.hpp"
 #include <GL/glew.h>        
 #include <GLFW\glfw3.h>
+
+
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
-#include <gtc/quaternion.hpp> 
+#include <gtc/quaternion.hpp>
 #include <gtx/quaternion.hpp>
+#include <gtx/euler_angles.hpp>
+#include <gtx/norm.hpp>
+
 #include "Object3d.h"
 
 class OpenGLRenderer :
@@ -21,13 +26,11 @@ public:
 	OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
 	~OpenGLRenderer();
 
-	void PrepareObject(const Object3d* object);
-	void PreDraw();
-	void DrawObject(Object3d* object, cv::Mat &camFrame);
-	void PostDraw();
-	void Draw(cv::Mat & camFrame);
-	GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path);
-	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
+	void initObject(const Object3d* object);
+	void preDraw();
+	void drawObject(Object3d* object, cv::Mat &camFrame);
+	void postDraw();
+
 	bool quit = false;
 
 private:
@@ -44,9 +47,11 @@ private:
 	GLFWwindow  *window;
 	GLuint programID;
 
-	void InitGL();
-	static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
-	static void window_size_callback(GLFWwindow * window, int width, int height);
-	static void framebuffer_size_callback(GLFWwindow * window, int width, int height);
+	void initGL();
+	GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
+	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
+	static void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
+	static void windowSizeCallback(GLFWwindow * window, int width, int height);
+	static void framebufferSizeCallback(GLFWwindow * window, int width, int height);
 };
 
