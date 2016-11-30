@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{3347e20d-9a35-4766-aa8c-4dd9235c6ff1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -71,5 +74,19 @@
     <ClCompile Include="Object3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\StandardShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\StandardShader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\UnlitShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\UnlitShader.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

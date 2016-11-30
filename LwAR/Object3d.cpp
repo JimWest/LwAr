@@ -31,22 +31,35 @@ Object3d::Object3d(Primitves primitve)
 
 		break;
 	case Quad:
-		vertices = std::vector<float>(12);
+		vertices = std::vector<float>(18);
 		vertices = {
 			//  X     Y     Z      
-			-1.0f, -1.0f, 0.0f,
+			/*-1.0f, -1.0f, 0.0f,
 			1.0f, -1.0f, 0.0f,
 			1.0f, 1.0, 0.0f,
+			1.0f, 1.0f, 0.0f,
+			1.0f, -1.0f, 0.0f,
+			-1.0f, -1.0f, 0.0f,
+
+*/
 			-1.0f, 1.0f, 0.0f,
+			-1.0f, -1.0f, 0.0f,
+			1.0f, -1.0f, 0.0f,
+			// Right top triangle
+			1.0f, -1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f,
+			-1.0f, 1.0f, 0.0f
 		};
 
-		uvs = std::vector<float>(8);
+		uvs = std::vector<float>(12);
 		uvs = {
 			//U     V
 			0.0f, 0.0f,
-			1.0f, 0.0f,
-			1.0f, 1.0f,
 			0.0f, 1.0f,
+			1.0f, 1.0f,
+			1.0f, 1.0f,
+			1.0f, 0.0f,
+			0.0f, 1.0f
 		};
 		break;
 	case Cube:

@@ -97,8 +97,7 @@
       <AdditionalLibraryDirectories>$(ProjectDir)opencv2\build\x86\vc12\lib;$(ProjectDir)openglWrappers\glfw\lib;$(ProjectDir)openglWrappers\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>XCOPY "$(ProjectDir)shaders" "$(TargetDir)" /S /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -174,6 +173,12 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Transform.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\StandardShader.frag" />
+    <None Include="shaders\StandardShader.vert" />
+    <None Include="shaders\UnlitShader.frag" />
+    <None Include="shaders\UnlitShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

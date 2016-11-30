@@ -19,6 +19,19 @@ int height = 480;
 
 // TODO: Auto copy needed dlls into the output folder
 
+cv::Mat ColorGradient()
+{
+	int taille = 500;
+	cv::Mat image(taille, taille, CV_8UC3);
+	for (int y = 0; y < taille; y++) {
+		cv::Vec3b val;
+		val[0] = 0; val[1] = (y * 255) / taille; val[2] = (taille - y) * 255 / taille;
+		for (int x = 0; x < taille; x++)
+			image.at<cv::Vec3b>(y, x) = val;
+	}
+	return image;
+}
+
 int main()
 {
 
@@ -36,35 +49,39 @@ int main()
 		cout << "Error openeing camera" << endl;
 		//return -1;
 
-		camFrame = cv::imread("lena1.png",1);
+		camFrame = cv::imread("lena1.png", 1);
 	}
-	
+
 	Object3d background = Object3d(Object3d::Quad);
 	Object3d cube = Object3d(Object3d::Cube);
 
 	renderer.initObject(&background);
 	renderer.initObject(&cube);
-	
+
 	cube.transform.translation = glm::vec3(-0.2f, 0.1f, 0.1f);
-	cube.transform.scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	cube.transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
 	cube.transform.rotation = glm::quat(glm::vec3(10, 10, 10));
+
+	int i = 1;
 
 	while (!renderer.quit)
 	{
 		if (cam.isOpened)
 		{
-			camFrame = cam.Retrieve();		
+			camFrame = cam.Retrieve();
 			// mirror on y axis so its like a mirror
 			cv::flip(camFrame, camFrame, 1);
 		}
 
 		renderer.preDraw();
-		
-		renderer.drawObject(&background, camFrame);
 
+		//renderer.drawObject(&background, camFrame);
+		cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
 		renderer.drawObject(&cube, camFrame);
 
 		renderer.postDraw();
+
+		i++;
 	}
 
 	return 0;

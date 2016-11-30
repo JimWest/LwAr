@@ -94,8 +94,8 @@ void OpenGLRenderer::initGL()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set our clear colour to black
 
-	//programID = LoadShaders("shaders/VertexShader.vertexshader", "shaders/FragmentShader.fragmentshader");
-	programID = loadShaders("shaders/StandardShading.vertexshader", "shaders/StandardShading.fragmentshader");
+	standardShaderID = loadShaders("shaders/StandardShader.vert", "shaders/StandardShader.frag");
+	unlitShaderID = loadShaders("shaders/UnlitShader.vert", "shaders/UnlitShader.frag");
 }
 
 void OpenGLRenderer::initObject(const Object3d* object)
@@ -126,7 +126,8 @@ void OpenGLRenderer::initObject(const Object3d* object)
 	//glEnableVertexAttribArray(vertCoordLoc);
 	//glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
 
-	glUseProgram(programID);
+	//glUseProgram(standardShaderID);
+	glUseProgram(unlitShaderID);
 }
 
 int i = 0;
@@ -160,15 +161,15 @@ void OpenGLRenderer::drawObject(Object3d* object, cv::Mat &camFrame)
 	glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 
 	// set the matrix paremters on the shader
-	GLuint matrixID = glGetUniformLocation(programID, "MVP");
-	GLuint viewMatrixID = glGetUniformLocation(programID, "V");
-	GLuint modelMatrixID = glGetUniformLocation(programID, "M");
+	GLuint matrixID = glGetUniformLocation(standardShaderID, "MVP");
+	GLuint viewMatrixID = glGetUniformLocation(standardShaderID, "V");
+	GLuint modelMatrixID = glGetUniformLocation(standardShaderID, "M");
 	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 	glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
 	glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]);
 
 	// set the light position in the shader
-	GLuint lightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	GLuint lightID = glGetUniformLocation(standardShaderID, "LightPosition_worldspace");
 	glm::vec3 lightPos = glm::vec3(4, 4, 4);
 	glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
 
@@ -183,7 +184,7 @@ void OpenGLRenderer::drawObject(Object3d* object, cv::Mat &camFrame)
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glUniform1i(textureID, 0);
 
-	GLint texLocation = glGetUniformLocation(programID, "myTextureSampler");
+	GLint texLocation = glGetUniformLocation(standardShaderID, "myTextureSampler");
 	glUniform1i(texLocation, GL_TEXTURE0);
 
 	glBindVertexArray((GLuint)object->vao);
@@ -199,7 +200,7 @@ void OpenGLRenderer::drawObject(Object3d* object, cv::Mat &camFrame)
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// Draw the object
-	glDrawArrays(GL_TRIANGLE_FAN, 0, (object->vertices.size()));
+	glDrawArrays(GL_TRIANGLES, 0, (object->vertices.size()));
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);

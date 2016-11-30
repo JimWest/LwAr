@@ -45,7 +45,8 @@ private:
 	int    frameCount = 0;
 	double frameStartTime, frameEndTime, frameDrawTime;
 	GLFWwindow  *window;
-	GLuint programID;
+	GLuint standardShaderID;
+	GLuint unlitShaderID;
 
 	void initGL();
 	GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
