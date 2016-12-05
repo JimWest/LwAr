@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 #include "../LwAR/LwAR.h"
-#include "../LwAR/glm/glm.hpp"
-#include "../LwAR/glm/gtc/matrix_transform.hpp"
-#include "../LwAR/glm/gtc/quaternion.hpp"
-#include "../LwAR/glm/gtx/quaternion.hpp"
-#include "../LwAR/glm/gtx/euler_angles.hpp"
+#include "glm.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/quaternion.hpp"
+#include "gtx/quaternion.hpp"
+#include "gtx/euler_angles.hpp"
 
 
 int width = 640;

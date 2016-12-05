@@ -8,3 +8,10 @@
 /Debug/*.ilk
 /.vs
 /x64
+/ExternalLibs/opencv2/sources
+/ExternalLibs/opencv2/build/doc
+/ExternalLibs/opencv2/build/x64/vc12/staticlib
+/ExternalLibs/opencv2/build/x64/vc11/staticlib
+/ExternalLibs/opencv2/build/x86/vc12/staticlib
+/ExternalLibs/opencv2/build/x86/vc11/staticlib
+/ExternalLibs/opencv2/build/x64

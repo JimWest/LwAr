@@ -54,5 +54,6 @@ private:
 	static void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
 	static void windowSizeCallback(GLFWwindow * window, int width, int height);
 	static void framebufferSizeCallback(GLFWwindow * window, int width, int height);
+
 };
 

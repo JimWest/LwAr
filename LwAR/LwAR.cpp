@@ -64,7 +64,7 @@ void LwAR::Start()
 		}
 
 		_renderer->postDraw();
-		//Sleep(1000);
+		Sleep(100);
 	}
 
 }

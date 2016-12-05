@@ -72,6 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\LwAR\opencv2\build\x86\vc12\lib;E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Debug;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Build\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -89,14 +90,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)LwAr\;$(SolutionDir)LwAr\glm;$(SolutionDir)LwAr\openglWrappers\glfw\include;$(SolutionDir)LwAr\openglWrappers\glew\include;$(SolutionDir)LwAr\opencv2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)LwAr\;$(SolutionDir)ExternalLibs\glm;$(SolutionDir)ExternalLibs\openglWrappers\glfw\include;$(SolutionDir)ExternalLibs\openglWrappers\glew\include;$(SolutionDir)ExternalLibs\opencv2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\LwAr\opencv2\build\x86\vc12\lib;$(SolutionDir)\LwAr\openglWrappers\glfw\lib;$(SolutionDir)\LwAr\openglWrappers\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv2\build\x86\vc12\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\lib;$(SolutionDir)ExternalLibs\openglWrappers\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
