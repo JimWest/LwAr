@@ -130,7 +130,6 @@ void OpenGLRenderer::initObject(const Object3d* object)
 	glUseProgram(unlitShaderID);
 }
 
-int i = 0;
 
 void OpenGLRenderer::preDraw()
 {

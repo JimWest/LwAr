@@ -26,10 +26,10 @@ public:
 	OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
 	~OpenGLRenderer();
 
-	void initObject(const Object3d* object);
-	void preDraw();
-	void drawObject(Object3d* object, cv::Mat &camFrame);
-	void postDraw();
+	void initObject(const Object3d* object) override;
+	void preDraw() override;
+	void drawObject(Object3d* object, cv::Mat &camFrame) override;
+	void postDraw() override;
 
 	bool quit = false;
 

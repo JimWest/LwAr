@@ -14,17 +14,24 @@ int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
 
+
+Object3d background;
+Object3d cube;
+
+int i = 0;
+
 void onUpdate()
 {
-	std::cout << "onUpdate" << '\n';
+	cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
+	i++;
 }
 
 int main()
 {
-	LwAR lwar = LwAR();
-	lwar.onUpdate = onUpdate;
-
 	OpenGLRenderer renderer = OpenGLRenderer(width, height, windowName);
+
+	LwAR lwar = LwAR(&renderer);
+	lwar.onUpdate = onUpdate;
 
 	// Create a our video capture using the Kinect and OpenNI
 	// Note: To use the cv::VideoCapture class you MUST link in the highgui lib (libopencv_highgui.so)
@@ -37,8 +44,8 @@ int main()
 		//return -1;
 	}
 
-	Object3d background = Object3d(Object3d::Quad);
-	Object3d cube = Object3d(Object3d::Cube);
+	background = Object3d(Object3d::Quad);
+	cube = Object3d(Object3d::Cube);
 
 	renderer.initObject(&background);
 	renderer.initObject(&cube);
@@ -47,6 +54,10 @@ int main()
 	cube.transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
 	cube.transform.rotation = glm::quat(glm::vec3(10, 10, 10));
 
+	lwar.AddObject(&background);
+	lwar.AddObject(&cube);
+
+	lwar.Start();
 
 
     return 0;

@@ -7,6 +7,7 @@ using namespace std;
 
 // TODO: Auto copy needed dlls into the output folder
 
+
 cv::Mat ColorGradient()
 {
 	int taille = 500;
@@ -21,9 +22,12 @@ cv::Mat ColorGradient()
 }
 
 
-LwAR::LwAR()
+
+LwAR::LwAR(Renderer* renderer)
 {
 	_running = true;
+	_renderer = renderer;
+	gradientTexture = ColorGradient();
 }
 
 
@@ -33,14 +37,13 @@ LwAR::~LwAR()
 
 void LwAR::AddObject(Object3d* object)
 {
-	_objects.insert(object);
+	_objects.push_back(object);
 }
 
 // only returns if the application should be closed
 void LwAR::Start()
 {
 	cv::Mat camFrame;
-	int i = 0;
 	while (_running)
 	{
 		if (_cam.isOpened)
@@ -50,15 +53,18 @@ void LwAR::Start()
 			cv::flip(camFrame, camFrame, 1);
 		}
 
-		_renderer.preDraw();
+		if (onUpdate)
+			onUpdate();
 
-		//renderer.drawObject(&background, camFrame);
-		//cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
-		//_renderer.drawObject(&cube, camFrame);
+		_renderer->preDraw();
 
-		_renderer.postDraw();
+		for (auto object = _objects.begin(); object != _objects.end(); object++)
+		{
+			_renderer->drawObject(*object, gradientTexture);
+		}
 
-		i++;
+		_renderer->postDraw();
+		//Sleep(1000);
 	}
 
 }
