@@ -1,21 +1,9 @@
 // LwAR.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
-#include <stdio.h>  
-#include <stdlib.h>  
-#include <Windows.h>
-#include <iostream>
-
-#include "OpenGLRenderer.h"
-#include "Camera.h"
-#include "LwAR.h"
-#include "Object3d.h"
+#include  "LwAR.h"
 
 using namespace std;
-
-int width = 640;
-int height = 480;
 
 // TODO: Auto copy needed dlls into the output folder
 
@@ -32,60 +20,45 @@ cv::Mat ColorGradient()
 	return image;
 }
 
-int main()
+
+LwAR::LwAR()
 {
+	_running = true;
+}
 
-	bool running = true;
+
+LwAR::~LwAR()
+{
+}
+
+void LwAR::AddObject(Object3d* object)
+{
+	_objects.insert(object);
+}
+
+// only returns if the application should be closed
+void LwAR::Start()
+{
 	cv::Mat camFrame;
-	OpenGLRenderer renderer = OpenGLRenderer(width, height, "Augmented Reality Test");
-
-	// Create a our video capture using the Kinect and OpenNI
-	// Note: To use the cv::VideoCapture class you MUST link in the highgui lib (libopencv_highgui.so)
-	cout << "Opening Webcam device ..." << endl;
-
-	Camera cam = Camera(0, width, height, 60);
-	if (!cam.isOpened)
+	int i = 0;
+	while (_running)
 	{
-		cout << "Error openeing camera" << endl;
-		//return -1;
-
-		camFrame = cv::imread("lena1.png", 1);
-	}
-
-	Object3d background = Object3d(Object3d::Quad);
-	Object3d cube = Object3d(Object3d::Cube);
-
-	renderer.initObject(&background);
-	renderer.initObject(&cube);
-
-	cube.transform.translation = glm::vec3(-0.2f, 0.1f, 0.1f);
-	cube.transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
-	cube.transform.rotation = glm::quat(glm::vec3(10, 10, 10));
-
-	int i = 1;
-
-	while (!renderer.quit)
-	{
-		if (cam.isOpened)
+		if (_cam.isOpened)
 		{
-			camFrame = cam.Retrieve();
+			camFrame = _cam.Retrieve();
 			// mirror on y axis so its like a mirror
 			cv::flip(camFrame, camFrame, 1);
 		}
 
-		renderer.preDraw();
+		_renderer.preDraw();
 
 		//renderer.drawObject(&background, camFrame);
-		cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
-		renderer.drawObject(&cube, camFrame);
+		//cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
+		//_renderer.drawObject(&cube, camFrame);
 
-		renderer.postDraw();
+		_renderer.postDraw();
 
 		i++;
 	}
 
-	return 0;
 }
-
-
-
