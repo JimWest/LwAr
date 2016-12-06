@@ -160,11 +160,11 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="LwAR.h" />
     <ClInclude Include="Marker.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Object3d.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="OpenGLShader.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
@@ -174,9 +174,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="LwAR.cpp" />
     <ClCompile Include="Marker.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Object3d.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>

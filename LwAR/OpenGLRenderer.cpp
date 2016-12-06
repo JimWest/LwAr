@@ -83,12 +83,12 @@ void OpenGLRenderer::initGL()
 	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 
 	// ----- OpenGL settings -----
-	glDepthFunc(GL_LEQUAL);		
-	glEnable(GL_DEPTH_TEST);    
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glEnable(GL_CULL_FACE);     
-	glfwSwapInterval(1);        
-								
+	glEnable(GL_CULL_FACE);
+	glfwSwapInterval(1);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -96,35 +96,25 @@ void OpenGLRenderer::initGL()
 
 	standardShaderID = loadShaders("shaders/StandardShader.vert", "shaders/StandardShader.frag");
 	unlitShaderID = loadShaders("shaders/UnlitShader.vert", "shaders/UnlitShader.frag");
+
+	if ((err = glGetError()) != GL_NO_ERROR) {
+		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+	}
 }
 
-void OpenGLRenderer::initObject(const Object3d* object)
+void OpenGLRenderer::initObject(Object3d& object)
 {
-	glGenVertexArrays(1, &(GLuint)object->vao);
-	glBindVertexArray((GLuint)object->vao);
+	glGenVertexArrays(1, &(GLuint)object.vao);
+	glBindVertexArray((GLuint)object.vao);
 
-	glGenBuffers(1, &(GLuint)object->vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, object->vbo);
-	glBufferData(GL_ARRAY_BUFFER, object->vertices.size() * sizeof(float), &object->vertices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &(GLuint)object.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, object.vbo);
+	glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), &object.vertices[0], GL_STATIC_DRAW);
 
 	GLuint uvbuffer;
-	glGenBuffers(1, &(GLuint)object->uvbo);
-	glBindBuffer(GL_ARRAY_BUFFER, object->uvbo);
-	glBufferData(GL_ARRAY_BUFFER, object->uvs.size() * sizeof(float), &object->uvs[0], GL_STATIC_DRAW);
-
-	//// Retrieve the vertex location in the program.
-	//GLint vertLoc = glGetAttribLocation(programID, "vert");
-
-	//// connect the xyz to the "vert" attribute of the vertex shader
-	//glEnableVertexAttribArray(vertLoc);
-	//glVertexAttribPointer(vertLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), NULL);
-
-	//// Retrieve the vertex location in the program.
-	//GLint vertCoordLoc = glGetAttribLocation(programID, "vertTexCoord");
-
-	//// connect the uv coords to the "vertTexCoord" attribute of the vertex shader
-	//glEnableVertexAttribArray(vertCoordLoc);
-	//glVertexAttribPointer(vertCoordLoc, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), (const GLvoid*)(3 * sizeof(GLfloat)));
+	glGenBuffers(1, &(GLuint)object.uvbo);
+	glBindBuffer(GL_ARRAY_BUFFER, object.uvbo);
+	glBufferData(GL_ARRAY_BUFFER, object.uvs.size() * sizeof(float), &object.uvs[0], GL_STATIC_DRAW);
 
 	//glUseProgram(standardShaderID);
 	glUseProgram(unlitShaderID);
@@ -136,13 +126,65 @@ void OpenGLRenderer::preDraw()
 	quit = glfwWindowShouldClose(window);
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 }
 
-void OpenGLRenderer::drawObject(Object3d* object, cv::Mat &camFrame)
+GLuint raw_texture_load(Material mat)
 {
+	GLuint textureID;
+
+	// allocate a texture name
+	glGenTextures(1, &textureID);
+
+	// select our current texture
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// select modulate to mix texture with color for shading
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_DECAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_DECAL);
+
+	// when texture area is small, bilinear filter the closest mipmap
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	// when texture area is large, bilinear filter the first mipmap
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// texture should tile
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// build our texture mipmaps
+	glTexImage2D(GL_TEXTURE_2D,     // Type of texture
+		0,                 // Pyramid level (for mip-mapping) - 0 is the top level
+		GL_RGB,            // Internal colour format to convert to
+		512,          // Image width  i.e. 640 for Kinect in standard mode
+		512,          // Image height i.e. 480 for Kinect in standard mode
+		0,                 // Border width in pixels (can either be 1 or 0)
+		GL_BGR, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+		GL_UNSIGNED_BYTE,  // Image data type
+		mat.texture.ptr());
+
+	return textureID;
+}
+
+void OpenGLRenderer::drawObject(Object3d& object)
+{
+	GLuint shaderId;
+
+	switch (object.material.shaderType)
+	{
+	case ShaderType::Standard:
+		shaderId = standardShaderID;
+		break;
+	case ShaderType::Unlit:
+	default:
+		shaderId = unlitShaderID;
+		break;
+	}
 
 	// Use our shader
-	//glUseProgram(programID);
+	glUseProgram(shaderId);
 
 	// Camera matrix
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
@@ -152,54 +194,74 @@ void OpenGLRenderer::drawObject(Object3d* object, cv::Mat &camFrame)
 
 	// modell matrix
 	glm::mat4 identyMatrix = glm::mat4(1.0f);
-	glm::mat4 translationMatrix = glm::translate(identyMatrix, object->transform.translation);
-	glm::mat4 scaleMatrix = glm::scale(identyMatrix, object->transform.scale);
-	glm::mat4 rotationMatrix = glm::toMat4(object->transform.rotation);
+	glm::mat4 translationMatrix = glm::translate(identyMatrix, object.transform.translation);
+	glm::mat4 scaleMatrix = glm::scale(identyMatrix, object.transform.scale);
+	glm::mat4 rotationMatrix = glm::toMat4(object.transform.rotation);
 	glm::mat4 modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 
 	glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 
 	// set the matrix paremters on the shader
-	GLuint matrixID = glGetUniformLocation(standardShaderID, "MVP");
-	GLuint viewMatrixID = glGetUniformLocation(standardShaderID, "V");
-	GLuint modelMatrixID = glGetUniformLocation(standardShaderID, "M");
+	GLuint matrixID = glGetUniformLocation(shaderId, "MVP");
+	GLuint viewMatrixID = glGetUniformLocation(shaderId, "V");
+	GLuint modelMatrixID = glGetUniformLocation(shaderId, "M");
 	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 	glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
 	glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]);
 
+	// check OpenGL error
+	GLenum err;
+	if ((err = glGetError()) != GL_NO_ERROR) {
+		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+	}
+
 	// set the light position in the shader
-	GLuint lightID = glGetUniformLocation(standardShaderID, "LightPosition_worldspace");
+	GLuint lightID = glGetUniformLocation(shaderId, "LightPosition_worldspace");
 	glm::vec3 lightPos = glm::vec3(4, 4, 4);
 	glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
 
-	// Convert image and depth data to OpenGL textures
-	GLuint textureID = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
+	if ((err = glGetError()) != GL_NO_ERROR) {
+		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+	}
 
+	// Convert image and depth data to OpenGL textures
+	//GLuint textureID = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
+	GLuint textureID = matToTexture(object.material.texture, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
+	//GLuint textureID = raw_texture_load(object->material);
 	// Draw the textures
 	// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.
 
-	// Front facing texture
+	
+
+	GLint texLocation = glGetUniformLocation(shaderId, "myTextureSampler");
+	glUniform1i(texLocation, 0);
+
+	if ((err = glGetError()) != GL_NO_ERROR) {
+		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+	}
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glUniform1i(textureID, 0);
+	//glUniform1i(textureID, 0);
 
-	GLint texLocation = glGetUniformLocation(standardShaderID, "myTextureSampler");
-	glUniform1i(texLocation, GL_TEXTURE0);
+	if ((err = glGetError()) != GL_NO_ERROR) {
+		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+	}
 
-	glBindVertexArray((GLuint)object->vao);
+	glBindVertexArray((GLuint)object.vao);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, object->vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, object.vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// 2nd attribute buffer : UVs
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, object->uvbo);
+	glBindBuffer(GL_ARRAY_BUFFER, object.uvbo);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// Draw the object
-	glDrawArrays(GL_TRIANGLES, 0, (object->vertices.size()));
+	glDrawArrays(GL_TRIANGLES, 0, (object.vertices.size()));
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -213,6 +275,12 @@ void OpenGLRenderer::postDraw()
 {
 	glfwSwapBuffers(window);
 	glfwPollEvents();
+
+	// check OpenGL error
+	GLenum err;
+	if ((err = glGetError()) != GL_NO_ERROR) {
+		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+	}
 }
 
 GLuint OpenGLRenderer::loadShaders(const char * vertex_file_path, const char * fragment_file_path) {
@@ -307,7 +375,7 @@ GLuint OpenGLRenderer::loadShaders(const char * vertex_file_path, const char * f
 }
 
 // returns the ID of the generated OpenGL Texture
-GLuint OpenGLRenderer::matToTexture(cv::Mat & mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter)
+GLuint OpenGLRenderer::matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter)
 {
 	// OpenCV stores image from top to buttom, OpenGL the oppsite so flip it
 	cv::Mat flippedMat;

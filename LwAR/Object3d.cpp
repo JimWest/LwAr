@@ -1,14 +1,10 @@
 #include "Object3d.h"
 
 
-
-Object3d::Object3d()
-{
-	transform = Transform();
-}
-
 Object3d::Object3d(Primitves primitve)
 {
+	transform = Transform();
+	material = Material();
 
 	switch (primitve)
 	{

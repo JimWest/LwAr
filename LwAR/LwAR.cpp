@@ -28,6 +28,7 @@ LwAR::LwAR(Renderer* renderer)
 	_running = true;
 	_renderer = renderer;
 	gradientTexture = ColorGradient();
+	//imwrite("test.png", gradientTexture);
 }
 
 
@@ -35,24 +36,18 @@ LwAR::~LwAR()
 {
 }
 
-void LwAR::AddObject(Object3d* object)
+void LwAR::AddObject(Object3d& object)
 {
-	_objects.push_back(object);
+	Object3d* objectPtr = &object;
+	_objects.push_back(objectPtr);
+	_renderer->initObject(object);
 }
 
 // only returns if the application should be closed
 void LwAR::Start()
 {
-	cv::Mat camFrame;
 	while (_running)
 	{
-		if (_cam.isOpened)
-		{
-			camFrame = _cam.Retrieve();
-			// mirror on y axis so its like a mirror
-			cv::flip(camFrame, camFrame, 1);
-		}
-
 		if (onUpdate)
 			onUpdate();
 
@@ -60,11 +55,11 @@ void LwAR::Start()
 
 		for (auto object = _objects.begin(); object != _objects.end(); object++)
 		{
-			_renderer->drawObject(*object, gradientTexture);
+			_renderer->drawObject(**object);
 		}
 
 		_renderer->postDraw();
-		Sleep(100);
+		//Sleep(100);
 	}
 
 }

@@ -19,7 +19,6 @@ Camera::Camera(int id, int width, int height, int fps)
 	capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
 	capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
 	capture.set(CV_CAP_PROP_FPS, fps);
-
 }
 
 

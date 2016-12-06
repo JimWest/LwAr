@@ -3,11 +3,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <assert.h>
+
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
 #include <GL/glew.h>        
 #include <GLFW\glfw3.h>
-
 
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
@@ -26,9 +27,9 @@ public:
 	OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
 	~OpenGLRenderer();
 
-	void initObject(const Object3d* object) override;
+	void initObject(Object3d& object) override;
 	void preDraw() override;
-	void drawObject(Object3d* object, cv::Mat &camFrame) override;
+	void drawObject(Object3d& object) override;
 	void postDraw() override;
 
 	bool quit = false;
@@ -50,10 +51,10 @@ private:
 
 	void initGL();
 	GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
-	static GLuint matToTexture(cv::Mat &mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
-	static void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
-	static void windowSizeCallback(GLFWwindow * window, int width, int height);
-	static void framebufferSizeCallback(GLFWwindow * window, int width, int height);
+	static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
+	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void windowSizeCallback(GLFWwindow* window, int width, int height);
+	static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 };
 

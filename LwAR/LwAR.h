@@ -19,6 +19,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <memory>
 
 #include "OpenGLRenderer.h"
 #include "Camera.h"
@@ -31,7 +32,7 @@ public:
 
 	LwAR(Renderer* renderer);
 	~LwAR();
-	void AddObject(Object3d * object);
+	void AddObject(Object3d &object);
 	void Start();
 	std::function<void()> onUpdate;
 
@@ -43,5 +44,5 @@ private:
 	Renderer* _renderer;
 	Camera _cam;
 	cv::Mat gradientTexture;
-	std::vector<Object3d *> _objects;
+	std::vector<Object3d*> _objects;
 };
