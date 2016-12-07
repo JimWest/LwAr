@@ -20,6 +20,7 @@ public:
 
 	std::vector<float> vertices;
 	std::vector<float> uvs;
+	bool visible = true;
 	Transform transform;
 	Material material;
 	uint32_t vao, vbo, uvbo;

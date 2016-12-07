@@ -29,7 +29,7 @@ public:
 
 	void initObject(Object3d& object) override;
 	void preDraw() override;
-	void drawObject(Object3d& object) override;
+	void drawObject(Object3d& object, bool ignoreDepth = false) override;
 	void postDraw() override;
 
 	bool quit = false;

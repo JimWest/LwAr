@@ -50,11 +50,11 @@ Object3d::Object3d(Primitves primitve)
 		uvs = std::vector<float>(12);
 		uvs = {
 			//U     V
-			0.0f, 0.0f,
 			0.0f, 1.0f,
-			1.0f, 1.0f,
-			1.0f, 1.0f,
+			0.0f, 0.0f,
 			1.0f, 0.0f,
+			1.0f, 0.0f,
+			1.0f, 1.0f,
 			0.0f, 1.0f
 		};
 		break;

@@ -21,14 +21,17 @@ cv::Mat ColorGradient()
 	return image;
 }
 
-
+LwAR::LwAR()
+{
+	_running = false;
+}
 
 LwAR::LwAR(Renderer* renderer)
 {
 	_running = true;
 	_renderer = renderer;
 	gradientTexture = ColorGradient();
-	//imwrite("test.png", gradientTexture);
+	_renderer->initObject(background);
 }
 
 
@@ -53,11 +56,17 @@ void LwAR::Start()
 
 		_renderer->preDraw();
 
+		// always render background first and ignore depth so other objects cant intercept with it
+		if (background.visible)
+			_renderer->drawObject(background, true);
+
 		for (auto object = _objects.begin(); object != _objects.end(); object++)
 		{
-			_renderer->drawObject(**object);
+			Object3d currentObject = **object;
+			if (currentObject.visible)
+				_renderer->drawObject(currentObject);
 		}
-
+		
 		_renderer->postDraw();
 		//Sleep(100);
 	}

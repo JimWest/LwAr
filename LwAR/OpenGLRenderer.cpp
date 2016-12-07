@@ -115,9 +115,6 @@ void OpenGLRenderer::initObject(Object3d& object)
 	glGenBuffers(1, &(GLuint)object.uvbo);
 	glBindBuffer(GL_ARRAY_BUFFER, object.uvbo);
 	glBufferData(GL_ARRAY_BUFFER, object.uvs.size() * sizeof(float), &object.uvs[0], GL_STATIC_DRAW);
-
-	//glUseProgram(standardShaderID);
-	glUseProgram(unlitShaderID);
 }
 
 
@@ -168,7 +165,7 @@ GLuint raw_texture_load(Material mat)
 	return textureID;
 }
 
-void OpenGLRenderer::drawObject(Object3d& object)
+void OpenGLRenderer::drawObject(Object3d& object, bool ignoreDepth)
 {
 	GLuint shaderId;
 
@@ -248,6 +245,10 @@ void OpenGLRenderer::drawObject(Object3d& object)
 		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
 	}
 
+
+	if (ignoreDepth)
+		glDisable(GL_DEPTH_TEST);
+
 	glBindVertexArray((GLuint)object.vao);
 
 	// 1rst attribute buffer : vertices
@@ -262,6 +263,10 @@ void OpenGLRenderer::drawObject(Object3d& object)
 
 	// Draw the object
 	glDrawArrays(GL_TRIANGLES, 0, (object.vertices.size()));
+
+	if (ignoreDepth)
+		glEnable(GL_DEPTH_TEST);
+
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);

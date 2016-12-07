@@ -30,11 +30,14 @@ class LwAR
 
 public:
 
+	LwAR();
 	LwAR(Renderer* renderer);
 	~LwAR();
 	void AddObject(Object3d &object);
 	void Start();
 	std::function<void()> onUpdate;
+
+	Object3d background  = Object3d(Primitves::Quad);
 
 private:
 

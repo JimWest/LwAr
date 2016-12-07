@@ -10,7 +10,7 @@ public:
 	virtual ~Renderer() {};
 	virtual void initObject(Object3d& object) {};
 	virtual void preDraw() {};
-	virtual void drawObject(Object3d& object) {};
+	virtual void drawObject(Object3d& object, bool ignoreDepth = false) {};
 	virtual void postDraw() {};
 };
 
