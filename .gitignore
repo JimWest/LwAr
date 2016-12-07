@@ -15,3 +15,5 @@
 /ExternalLibs/opencv2/build/x86/vc12/staticlib
 /ExternalLibs/opencv2/build/x86/vc11/staticlib
 /ExternalLibs/opencv2/build/x64
+/LwARTest/Debug
+/LwARTest/Release

@@ -48,6 +48,7 @@ int main()
 	std::cout << "Opening Webcam device ..." << std::endl;
 
 	cam = Camera(0, width, height, 60);
+	cam.init();
 	if (!cam.isOpened)
 	{
 		std::cout << "Error openeing camera" << std::endl;

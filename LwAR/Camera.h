@@ -9,12 +9,13 @@ public:
 	Camera(int id, int width, int height, int fps);
 	~Camera();
 
+	void init();
 	cv::Mat Retrieve();
 
 	bool isOpened;
 
 private:
-	int width, height, fps;
+	int id, width, height, fps;
 
 	cv::VideoCapture capture;
 };

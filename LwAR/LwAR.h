@@ -42,7 +42,6 @@ private:
 	int _height = 480;
 	bool _running;
 	Renderer* _renderer;
-	Camera _cam;
 	cv::Mat gradientTexture;
 	std::vector<Object3d*> _objects;
 };
