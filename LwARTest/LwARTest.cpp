@@ -54,8 +54,10 @@ int main()
 
 	cube = Object3d(Primitves::Cube);	
 	cube.transform.translation = glm::vec3(-0.2f, 0.1f, 0.1f);
-	cube.transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
+	cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f);
 	cube.transform.rotation = glm::quat(glm::vec3(10, 10, 10));
+
+	cube.material.texture = Material::ColorGradient();
 		
 	lwar.AddObject(cube);
 

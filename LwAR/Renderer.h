@@ -5,12 +5,14 @@
 
 class Renderer
 {
-public:	
+public:
 	Renderer() {};
 	virtual ~Renderer() {};
 	virtual void initObject(Object3d& object) {};
 	virtual void preDraw() {};
 	virtual void drawObject(Object3d& object, bool ignoreDepth = false) {};
 	virtual void postDraw() {};
+	virtual int getWindowWidth() = 0;
+	virtual int getWindowHeight() = 0;
 };
 

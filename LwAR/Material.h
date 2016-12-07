@@ -8,12 +8,13 @@ enum ShaderType {
 };
 
 class Material
-{
+{		
 public:
 	Material() : Material(ShaderType::Unlit) {}
 	Material(ShaderType shaderType, cv::Mat texture = cv::Mat());
 	~Material();
-	cv::Mat GetDefaultTexture();
+	static cv::Mat GetDefaultTexture();
+	static cv::Mat ColorGradient();
 
 	cv::Mat texture;
 	ShaderType shaderType;

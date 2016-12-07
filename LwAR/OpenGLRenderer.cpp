@@ -77,7 +77,7 @@ void OpenGLRenderer::initGL()
 	// The following code is a fancy bit of math that is equivilant to calling:
 	// gluPerspective(fieldOfView/2.0f, width/height , near, far);
 	// We do it this way simply to avoid requiring glu.h
-	GLfloat aspectRatio = (windowWidth > windowHeight) ? float(windowWidth) / float(windowHeight) : float(windowHeight) / float(windowWidth);
+	aspectRatio = (windowWidth > windowHeight) ? float(windowWidth) / float(windowHeight) : float(windowHeight) / float(windowWidth);
 	GLfloat fH = tan(float(fieldOfView / 360.0f * 3.14159f)) * zNear;
 	GLfloat fW = fH * aspectRatio;
 	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
@@ -165,6 +165,7 @@ GLuint raw_texture_load(Material mat)
 	return textureID;
 }
 
+
 void OpenGLRenderer::drawObject(Object3d& object, bool ignoreDepth)
 {
 	GLuint shaderId;
@@ -184,7 +185,7 @@ void OpenGLRenderer::drawObject(Object3d& object, bool ignoreDepth)
 	glUseProgram(shaderId);
 
 	// Camera matrix
-	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	glm::mat4 projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, zNear, zFar);
 	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
@@ -226,9 +227,7 @@ void OpenGLRenderer::drawObject(Object3d& object, bool ignoreDepth)
 	GLuint textureID = matToTexture(object.material.texture, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
 	//GLuint textureID = raw_texture_load(object->material);
 	// Draw the textures
-	// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.
-
-	
+	// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.	
 
 	GLint texLocation = glGetUniformLocation(shaderId, "myTextureSampler");
 	glUniform1i(texLocation, 0);
@@ -286,6 +285,16 @@ void OpenGLRenderer::postDraw()
 	if ((err = glGetError()) != GL_NO_ERROR) {
 		cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
 	}
+}
+
+int OpenGLRenderer::getWindowWidth()
+{
+	return windowWidth;
+}
+
+int OpenGLRenderer::getWindowHeight()
+{
+	return windowHeight;
 }
 
 GLuint OpenGLRenderer::loadShaders(const char * vertex_file_path, const char * fragment_file_path) {

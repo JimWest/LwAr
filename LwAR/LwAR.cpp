@@ -8,19 +8,6 @@ using namespace std;
 // TODO: Auto copy needed dlls into the output folder
 
 
-cv::Mat ColorGradient()
-{
-	int taille = 500;
-	cv::Mat image(taille, taille, CV_8UC3);
-	for (int y = 0; y < taille; y++) {
-		cv::Vec3b val;
-		val[0] = 0; val[1] = (y * 255) / taille; val[2] = (taille - y) * 255 / taille;
-		for (int x = 0; x < taille; x++)
-			image.at<cv::Vec3b>(y, x) = val;
-	}
-	return image;
-}
-
 LwAR::LwAR()
 {
 	_running = false;
@@ -30,8 +17,21 @@ LwAR::LwAR(Renderer* renderer)
 {
 	_running = true;
 	_renderer = renderer;
-	gradientTexture = ColorGradient();
 	_renderer->initObject(background);
+
+	// calculate the needed scale of the background so it fits on the whole screen
+	float windowHeight = _renderer->getWindowHeight();
+	float windowWidth = _renderer->getWindowWidth();
+	float aspectRatio = (windowHeight) ? float(windowWidth) / float(windowHeight) : float(windowHeight) / float(windowWidth);
+
+	// size of the frostum at the distance of the background
+	float distance = 3.0f;
+	float frustumHeight = distance * tan(glm::radians(45.0f * 0.5f));
+	float frustumWidth = frustumHeight * aspectRatio;
+
+	background.transform.scale = glm::vec3(frustumWidth, frustumHeight , 1.0f);
+
+	float scale = 1;
 }
 
 

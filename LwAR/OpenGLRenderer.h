@@ -31,6 +31,8 @@ public:
 	void preDraw() override;
 	void drawObject(Object3d& object, bool ignoreDepth = false) override;
 	void postDraw() override;
+	int getWindowWidth() override;
+	int getWindowHeight() override;
 
 	bool quit = false;
 
@@ -38,13 +40,12 @@ private:
 
 	typedef unsigned int uint;
 	std::string windowTitle;
-	GLint   windowWidth = 640;     // Define our window width
-	GLint   windowHeight = 480;     // Define our window height
+	GLint windowWidth = 640;     // Define our window width
+	GLint windowHeight = 480;     // Define our window height
+	GLfloat aspectRatio;
 	GLfloat fieldOfView = 45.0f;   // FoV
 	GLfloat zNear = 0.1f;    // Near clip plane
 	GLfloat zFar = 200.0f;  // Far clip plane
-	int    frameCount = 0;
-	double frameStartTime, frameEndTime, frameDrawTime;
 	GLFWwindow  *window;
 	GLuint standardShaderID;
 	GLuint unlitShaderID;

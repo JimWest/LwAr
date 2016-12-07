@@ -24,3 +24,17 @@ cv::Mat Material::GetDefaultTexture()
 	image.setTo(cv::Scalar(255, 255, 255));
 	return image;
 }
+
+
+cv::Mat Material::ColorGradient()
+{
+	int taille = 512;
+	cv::Mat image(taille, taille, CV_8UC3);
+	for (int y = 0; y < taille; y++) {
+		cv::Vec3b val;
+		val[0] = 0; val[1] = (y * 255) / taille; val[2] = (taille - y) * 255 / taille;
+		for (int x = 0; x < taille; x++)
+			image.at<cv::Vec3b>(y, x) = val;
+	}
+	return image;
+}
