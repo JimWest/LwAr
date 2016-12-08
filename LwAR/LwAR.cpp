@@ -30,8 +30,6 @@ LwAR::LwAR(Renderer* renderer)
 	float frustumWidth = frustumHeight * aspectRatio;
 
 	background.transform.scale = glm::vec3(frustumWidth, frustumHeight , 1.0f);
-
-	float scale = 1;
 }
 
 

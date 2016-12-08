@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)LwAr\;$(SolutionDir)ExternalLibs\glm;$(SolutionDir)ExternalLibs\openglWrappers\glfw\include;$(SolutionDir)ExternalLibs\openglWrappers\glew\include;$(SolutionDir)ExternalLibs\opencv2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ExternalLibs\aruco\include;$(SolutionDir)LwAr\;$(SolutionDir)ExternalLibs\glm;$(SolutionDir)ExternalLibs\openglWrappers\glfw\include;$(SolutionDir)ExternalLibs\openglWrappers\glew\include;$(SolutionDir)ExternalLibs\opencv2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
