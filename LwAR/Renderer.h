@@ -1,7 +1,9 @@
 #pragma once
 
+#include <functional>
 #include "Object3d.h"
 #include "opencv2/opencv.hpp"
+
 
 namespace lwar
 {
@@ -16,5 +18,6 @@ namespace lwar
 		virtual void postDraw() {};
 		virtual int getWindowWidth() = 0;
 		virtual int getWindowHeight() = 0;
+		std::function<void(int key)> onKeyboardInput;
 	};
 }

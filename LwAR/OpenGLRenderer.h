@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <assert.h>
+#include <functional>
 
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
@@ -37,6 +38,7 @@ namespace lwar
 		int getWindowWidth() override;
 		int getWindowHeight() override;
 
+		//std::function<void(lwar::Renderer* renderer, int key, int scancode, int action, int mods)> onKeyboardInput;
 		bool quit = false;
 
 	private:

@@ -20,6 +20,12 @@ namespace lwar
 	{
 		_running = true;
 		_renderer = renderer;
+
+		// bin is needed so we can call  member functions
+		_renderer->onKeyboardInput = std::bind(&Window::onRendererKeyInput, this, std::placeholders::_1);
+
+		//std::bind(&A::func, &a, std::placeholders::_1, std::placeholders::_2);
+
 		_renderer->initObject(background);
 
 		// calculate the needed scale of the background so it fits on the whole screen
@@ -33,6 +39,9 @@ namespace lwar
 		float frustumWidth = frustumHeight * aspectRatio;
 
 		background.transform.scale = glm::vec3(frustumWidth, frustumHeight, 1.0f);
+
+		projectionMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 200.0f);
+		viewMatrix = glm::mat3(1.0f);
 	}
 
 
@@ -40,15 +49,14 @@ namespace lwar
 	{
 	}
 
-	void Window::AddObject(Object3d& object)
+	void Window::addObject(Object3d& object)
 	{
-		Object3d* objectPtr = &object;
-		_objects.push_back(objectPtr);
 		_renderer->initObject(object);
+		_scene.objects.push_back(object);
 	}
 
 	// only returns if the application should be closed
-	void Window::Start()
+	void Window::start()
 	{
 		while (_running)
 		{
@@ -61,11 +69,10 @@ namespace lwar
 			if (background.visible)
 				_renderer->drawObject(background, true);
 
-			for (auto object = _objects.begin(); object != _objects.end(); object++)
+			for (int i = 0; i < _scene.objects.size(); i++)
 			{
-				Object3d currentObject = **object;
-				if (currentObject.visible)
-					_renderer->drawObject(currentObject);
+				if (_scene.objects.at(i).visible)
+					_renderer->drawObject(_scene.objects.at(i));
 			}
 
 			_renderer->postDraw();
@@ -74,14 +81,47 @@ namespace lwar
 
 	}
 
-	Renderer* Window::GetRenderer()
+	void Window::stop()
+	{
+		_running = false;
+	}
+
+	void Window::onRendererKeyInput(int key)
+	{
+		std::cout << std::to_string(key) << std::endl;
+		_lastKey = key;
+	}
+
+
+	Renderer* Window::getRenderer() const
 	{
 		return _renderer;
 	}
 
-
-	Camera& Window::GetCamera()
+	Scene& Window::getScene()
 	{
-		return _camera;
+		return _scene;
+	}
+
+	int Window::getLastKey()
+	{
+		return _lastKey;
+	}
+
+	glm::vec3 Window::toScreenPoint(glm::vec2 position)
+	{
+		double x = 2.0 * position.x / _width - 1;
+		double y = -2.0 * position.y / _height + 1;
+		glm::mat4 viewProjectionInverse =
+			glm::inverse(projectionMatrix *	viewMatrix);
+
+		glm::vec4 point3D = glm::vec4(x, y, 0, 1);
+		point3D = viewProjectionInverse * point3D;
+		return  glm::vec3(point3D.x, point3D.y, 0);
+	}
+
+	glm::vec2 Window::toScenePoint(glm::vec3 position)
+	{
+		return glm::vec2();
 	}
 }

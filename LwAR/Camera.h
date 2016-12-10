@@ -1,6 +1,10 @@
 #pragma once
 
 #include "opencv2/opencv.hpp"
+#include "glm.hpp"
+
+
+
 
 namespace lwar
 {
@@ -12,7 +16,7 @@ namespace lwar
 		~Camera();
 
 		void init();
-		cv::Mat Retrieve();
+		cv::Mat retrieve();
 
 		bool isOpened;
 

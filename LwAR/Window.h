@@ -26,10 +26,14 @@
 #include <functional>
 #include <vector>
 #include <memory>
+#include "gtc/matrix_transform.hpp"
 
 #include "OpenGLRenderer.h"
 #include "Camera.h"
 #include "Object3d.h"
+#include "Scene.h"
+
+// TODO: TIME, KEYS/ MOUSE
 
 namespace lwar
 {
@@ -41,12 +45,20 @@ namespace lwar
 		Window();
 		Window(Renderer* renderer);
 		~Window();
-		void AddObject(Object3d &object);
-		void Start();
+		void addObject(Object3d &object);
+		void start();
+		void stop();
 
-		Renderer* GetRenderer();
-		Camera& GetCamera();
-		
+		void onRendererKeyInput(int key);
+
+		Renderer* getRenderer() const;
+		Scene& getScene();
+		int getLastKey();
+
+		glm::vec3 toScreenPoint(glm::vec2 position);
+		glm::vec2 toScenePoint(glm::vec3 position);
+
+		std::function<void(lwar::Window& window, int key, int scancode, int action, int mods)> onKeyboardInput;
 		std::function<void(lwar::Window& window)> onUpdate;
 		Object3d background = Object3d(Primitves::Quad);
 
@@ -54,11 +66,13 @@ namespace lwar
 
 		int _width = 640;
 		int _height = 480;
-		bool _running;
+		bool _running = false;
+		int _lastKey = 0;
 		Renderer* _renderer;
-		Camera _camera;
-		cv::Mat gradientTexture;
-		std::vector<Object3d*> _objects;
+		Scene _scene;
+		glm::mat4 projectionMatrix;
+		glm::mat4 viewMatrix;
+
 	};
 }
 

@@ -26,8 +26,12 @@ namespace lwar
 
 	void OpenGLRenderer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
+		// callback for pressed keys, glfwGetWindowUserPointer needed cause glfw needs static functions for callbacks
+		OpenGLRenderer *renderer = static_cast<OpenGLRenderer*>(glfwGetWindowUserPointer(window));
+		if (action == GLFW_PRESS && renderer->onKeyboardInput)
+			renderer->onKeyboardInput(key);
+		else 
+			renderer->onKeyboardInput(-1);
 	}
 
 	void OpenGLRenderer::windowSizeCallback(GLFWwindow* window, int width, int height)
@@ -56,7 +60,9 @@ namespace lwar
 		}
 
 		// Specify the callback function for key presses/releases
+		glfwSetWindowUserPointer(window, this);
 		glfwSetKeyCallback(window, keyCallback);
+
 		glfwSetWindowSizeCallback(window, windowSizeCallback);
 		glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 

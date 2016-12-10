@@ -32,7 +32,7 @@ namespace lwar
 	}
 
 
-	cv::Mat Camera::Retrieve()
+	cv::Mat Camera::retrieve()
 	{
 		cv::Mat frame;
 		//capture.retrieve(frame, CV_CAP_OPENNI_BGR_IMAGE);
