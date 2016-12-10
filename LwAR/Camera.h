@@ -2,21 +2,24 @@
 
 #include "opencv2/opencv.hpp"
 
-class Camera
+namespace lwar
 {
-public:
-	Camera();
-	Camera(int id, int width, int height, int fps);
-	~Camera();
+	class Camera
+	{
+	public:
+		Camera();
+		Camera(int id, int width, int height, int fps);
+		~Camera();
 
-	void init();
-	cv::Mat Retrieve();
+		void init();
+		cv::Mat Retrieve();
 
-	bool isOpened;
+		bool isOpened;
 
-private:
-	int id, width, height, fps;
+	private:
+		int id, width, height, fps;
 
-	cv::VideoCapture capture;
-};
+		cv::VideoCapture capture;
+	};
+}
 

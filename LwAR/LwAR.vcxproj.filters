@@ -48,21 +48,18 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LwAR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGLShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LwAR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Marker.cpp">
@@ -74,13 +71,13 @@
     <ClCompile Include="OpenGLRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Object3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,12 +1,14 @@
 #include "Marker.h"
 
 
-
-Marker::Marker()
+namespace lwar
 {
-}
+	Marker::Marker()
+	{
+	}
 
 
-Marker::~Marker()
-{
+	Marker::~Marker()
+	{
+	}
 }

@@ -1,8 +1,11 @@
 #pragma once
-class Marker
+namespace lwar
 {
-public:
-	Marker();
-	~Marker();
-};
+	class Marker
+	{
+	public:
+		Marker();
+		~Marker();
+	};
+}
 

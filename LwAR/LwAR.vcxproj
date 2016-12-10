@@ -158,7 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="LwAR.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="Marker.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Object3d.h" />
@@ -172,13 +172,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="LwAR.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="Marker.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Object3d.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\StandardShader.frag" />

@@ -19,43 +19,47 @@
 
 #include "Object3d.h"
 
-class OpenGLRenderer :
-	public Renderer
+namespace lwar
 {
-public:
-	OpenGLRenderer();
-	OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
-	~OpenGLRenderer();
 
-	void initObject(Object3d& object) override;
-	void preDraw() override;
-	void drawObject(Object3d& object, bool ignoreDepth = false) override;
-	void postDraw() override;
-	int getWindowWidth() override;
-	int getWindowHeight() override;
+	class OpenGLRenderer :
+		public Renderer
+	{
+	public:
+		OpenGLRenderer();
+		OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
+		~OpenGLRenderer();
 
-	bool quit = false;
+		void initObject(Object3d& object) override;
+		void preDraw() override;
+		void drawObject(Object3d& object, bool ignoreDepth = false) override;
+		void postDraw() override;
+		int getWindowWidth() override;
+		int getWindowHeight() override;
 
-private:
+		bool quit = false;
 
-	typedef unsigned int uint;
-	std::string windowTitle;
-	GLint windowWidth = 640;     // Define our window width
-	GLint windowHeight = 480;     // Define our window height
-	GLfloat aspectRatio;
-	GLfloat fieldOfView = 45.0f;   // FoV
-	GLfloat zNear = 0.1f;    // Near clip plane
-	GLfloat zFar = 200.0f;  // Far clip plane
-	GLFWwindow  *window;
-	GLuint standardShaderID;
-	GLuint unlitShaderID;
+	private:
 
-	void initGL();
-	GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
-	static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
-	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void windowSizeCallback(GLFWwindow* window, int width, int height);
-	static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+		typedef unsigned int uint;
+		std::string windowTitle;
+		GLint windowWidth = 640;     // Define our window width
+		GLint windowHeight = 480;     // Define our window height
+		GLfloat aspectRatio;
+		GLfloat fieldOfView = 45.0f;   // FoV
+		GLfloat zNear = 0.1f;    // Near clip plane
+		GLfloat zFar = 200.0f;  // Far clip plane
+		GLFWwindow  *window;
+		GLuint standardShaderID;
+		GLuint unlitShaderID;
 
-};
+		void initGL();
+		GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
+		static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
+		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void windowSizeCallback(GLFWwindow* window, int width, int height);
+		static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+	};
+}
 

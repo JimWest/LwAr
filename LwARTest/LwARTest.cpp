@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "../LwAR/LwAR.h"
+#include "../LwAR/Window.h"
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/quaternion.hpp"
@@ -13,18 +13,15 @@
 int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
-
-Renderer* renderer;
-LwAR lwar;
-Object3d cube;
-Camera cam;
-cv::Mat camFrame;
-
 int i = 0;
-
 
 std::vector<cv::Vec3f> detectRedCircle(cv::Mat& image)
 {
+	std::vector<cv::Vec3f> circles;
+	if (image.empty())
+		return circles;
+
+
 	cv::Mat orig_image = image.clone();
 
 	cv::medianBlur(image, image, 3);
@@ -46,7 +43,6 @@ std::vector<cv::Vec3f> detectRedCircle(cv::Mat& image)
 	cv::GaussianBlur(red_hue_image, red_hue_image, cv::Size(9, 9), 2, 2);
 
 	// Use the Hough transform to detect circles in the combined threshold image
-	std::vector<cv::Vec3f> circles;
 	cv::HoughCircles(red_hue_image, circles, CV_HOUGH_GRADIENT, 2, red_hue_image.rows / 4, 200, 100);
 
 	return circles;
@@ -90,8 +86,12 @@ glm::vec3 get3dPoint(glm::vec2 point2d, int width,
 
 
 
-void onUpdate()
+void onUpdate(lwar::Window& window)
 {
+	lwar::Renderer* renderer = window.GetRenderer();
+	lwar::Camera cam = window.GetCamera();
+	cv::Mat camFrame;
+
 	if (cam.isOpened)
 	{
 		camFrame = cam.Retrieve();
@@ -111,38 +111,36 @@ void onUpdate()
 	float frustumWidth = frustumHeight * aspectRatio;
 
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 200.0f);
-	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 viewMatrix = glm::mat3(1.0f);
 
 	// Loop over all detected circles and outline them on the original image
 	if (circles.size() != 0)
 	{
 		cv::Point center(std::round(circles[0][0]), std::round(circles[0][1]));
 		int radius = std::round(circles[0][2]);
-			
+
 		glm::vec3 point = get3dPoint(glm::vec2(center.x, center.y), 640, 480, viewMatrix, projectionMatrix);
 		point *= 3;
-		cube.transform.translation = point;		
+		//cube.transform.translation = point;		
 	}
 
 
-	lwar.background.material.texture = camFrame;
+	window.background.material.texture = camFrame;
 	//cube.transform.translation = glm::vec3(0, 1 * i / 100.0f, 0);
-	cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
+	//cube.transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
 	i++;
 }
 
 int main()
 {
-	renderer = new OpenGLRenderer(width, height, windowName);
+	lwar::Renderer* renderer = new lwar::OpenGLRenderer(width, height, windowName);
 
-	lwar = LwAR(renderer);
-	lwar.onUpdate = onUpdate;
+	lwar::Window window = lwar::Window(renderer);
+	window.onUpdate = onUpdate;
 
 	std::cout << "Opening Webcam device ..." << std::endl;
 
-	cam = Camera(0, width, height, 60);
+	lwar::Camera cam = lwar::Camera(0, width, height, 60);
 	cam.init();
 	if (!cam.isOpened)
 	{
@@ -150,17 +148,17 @@ int main()
 		//return -1;
 	}
 
-	cube = Object3d(Primitves::Cube);
+	lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
 	cube.transform.translation = glm::vec3(0.0f, 0.0f, 0.0f);
 	cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f);
 	cube.transform.rotation = glm::quat(glm::vec3(10, 10, 10));
 
-	cube.material.texture = Material::ColorGradient();
+	cube.material.texture = lwar::Material::ColorGradient();
 
-	lwar.AddObject(cube);
+	window.AddObject(cube);
 
 	// starts the main loop
-	lwar.Start();
+	window.Start();
 
 	delete(renderer);
 
