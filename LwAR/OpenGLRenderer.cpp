@@ -30,7 +30,7 @@ namespace lwar
 		OpenGLRenderer *renderer = static_cast<OpenGLRenderer*>(glfwGetWindowUserPointer(window));
 		if (action == GLFW_PRESS && renderer->onKeyboardInput)
 			renderer->onKeyboardInput(key);
-		else 
+		else
 			renderer->onKeyboardInput(-1);
 	}
 
@@ -119,10 +119,16 @@ namespace lwar
 		glBindBuffer(GL_ARRAY_BUFFER, object.vbo);
 		glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(glm::vec3), &object.vertices[0], GL_STATIC_DRAW);
 
-		GLuint uvbuffer;
 		glGenBuffers(1, &(GLuint)object.uvbo);
 		glBindBuffer(GL_ARRAY_BUFFER, object.uvbo);
 		glBufferData(GL_ARRAY_BUFFER, object.uvs.size() * sizeof(glm::vec2), &object.uvs[0], GL_STATIC_DRAW);
+
+		if (object.normals.size() > 0)
+		{
+			glGenBuffers(1, &(GLuint)object.nbo);
+			glBindBuffer(GL_ARRAY_BUFFER, object.nbo);
+			glBufferData(GL_ARRAY_BUFFER, object.normals.size() * sizeof(glm::vec3), &object.normals[0], GL_STATIC_DRAW);
+		}
 	}
 
 
@@ -268,15 +274,23 @@ namespace lwar
 		glBindBuffer(GL_ARRAY_BUFFER, object.uvbo);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+		// 3rd attribute buffer : normals
+		if (object.nbo > 0)
+		{
+			glEnableVertexAttribArray(2);
+			glBindBuffer(GL_ARRAY_BUFFER, object.nbo);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		}
+
 		// Draw the object
 		glDrawArrays(GL_TRIANGLES, 0, (object.vertices.size()));
 
 		if (ignoreDepth)
 			glEnable(GL_DEPTH_TEST);
 
-
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
 
 		// Free the texture memory
 		glDeleteTextures(1, &textureID);

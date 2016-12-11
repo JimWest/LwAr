@@ -4,9 +4,6 @@ namespace lwar
 {
 	Object3d::Object3d(Primitves primitve)
 	{
-		transform = Transform();
-		material = Material();
-
 		switch (primitve)
 		{
 		case Triangle:
@@ -126,6 +123,7 @@ namespace lwar
 	Object3d::Object3d(const char * path)
 	{
 		loadOBJ(path, vertices, uvs, normals);
+		material.shaderType = ShaderType::Standard;
 	}
 
 
