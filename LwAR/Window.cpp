@@ -16,22 +16,23 @@ namespace lwar
 		_running = false;
 	}
 
-	Window::Window(Renderer* renderer)
+	Window::Window(int width, int height, std::string title, RenderType renderType)
 	{
 		_running = true;
-		_renderer = renderer;
+
+		switch (renderType)
+		{
+		case RenderType::OpenGL:
+			_renderer = new lwar::OpenGLRenderer(width, height, title);
+			break;
+		}
 
 		// bin is needed so we can call  member functions
 		_renderer->onKeyboardInput = std::bind(&Window::onRendererKeyInput, this, std::placeholders::_1);
-
-		//std::bind(&A::func, &a, std::placeholders::_1, std::placeholders::_2);
-
 		_renderer->initObject(background);
 
 		// calculate the needed scale of the background so it fits on the whole screen
-		float windowHeight = _renderer->getWindowHeight();
-		float windowWidth = _renderer->getWindowWidth();
-		float aspectRatio = (windowHeight) ? float(windowWidth) / float(windowHeight) : float(windowHeight) / float(windowWidth);
+		float aspectRatio = (height) ? float(width) / float(height) : float(height) / float(width);
 
 		// size of the frostum at the distance of the background
 		float distance = 3.0f;
@@ -47,6 +48,7 @@ namespace lwar
 
 	Window::~Window()
 	{
+		delete(_renderer);
 	}
 
 	void Window::addObject(Object3d& object)

@@ -13,15 +13,12 @@
 int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
-int i = 0;
 
 std::vector<cv::Vec3f> detectRedCircle(cv::Mat& image)
 {
 	std::vector<cv::Vec3f> circles;
 	if (image.empty())
 		return circles;
-
-	cv::Mat orig_image = image.clone();
 
 	cv::medianBlur(image, image, 3);
 
@@ -43,37 +40,10 @@ std::vector<cv::Vec3f> detectRedCircle(cv::Mat& image)
 	cv::GaussianBlur(red_hue_image, red_hue_image, cv::Size(9, 9), 2, 2);
 
 	// Use the Hough transform to detect circles in the combined threshold image
-	cv::HoughCircles(red_hue_image, circles, CV_HOUGH_GRADIENT, 2, red_hue_image.rows / 4, 5, 50);
+	cv::HoughCircles(red_hue_image, circles, CV_HOUGH_GRADIENT, 2, red_hue_image.rows / 8, 30, 100, 0, 100);
 
 	return circles;
-
-	//// Loop over all detected circles and outline them on the original image
-	//if (circles.size() != 0)
-	//{
-	//	for (size_t current_circle = 0; current_circle < circles.size(); ++current_circle) {
-	//		cv::Point center(std::round(circles[current_circle][0]), std::round(circles[current_circle][1]));
-	//		int radius = std::round(circles[current_circle][2]);
-
-	//		cv::circle(orig_image, center, radius, cv::Scalar(0, 255, 0), 5);
-	//	}
-	//}
-
-	//return orig_image;
 }
-
-glm::vec3 get3dPoint(glm::vec2 point2d, int width,
-	int height, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
-
-	double x = 2.0 * point2d.x / width - 1;
-	double y = -2.0 * point2d.y / height + 1;
-	glm::mat4 viewProjectionInverse = glm::inverse(projectionMatrix *
-		viewMatrix);
-
-	glm::vec4 point3D = glm::vec4(x, y, 0, 1);
-	point3D = viewProjectionInverse * point3D;
-	return  glm::vec3(point3D.x, point3D.y, 0);
-}
-
 
 
 void onUpdate(lwar::Window& window)
@@ -94,31 +64,42 @@ void onUpdate(lwar::Window& window)
 	// Loop over all detected circles and outline them on the original image
 	if (circles.size() != 0)
 	{
-		cv::Point center(std::round(circles[0][0]), std::round(circles[0][1]));
-		int radius = std::round(circles[0][2]);
-
-		glm::vec3 point = window.toScreenPoint(glm::vec2(center.x, center.y));
-		point *= 3;
-
-		if (scene.objects.size() <= 0)
+		for (int i = 0; i < circles.size(); ++i)
 		{
-			lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
-			cube.material.texture = lwar::Material::ColorGradient();
+			cv::Point center(std::round(circles[i][0]), std::round(circles[i][1]));
+			int radius = std::round(circles[i][2]);
 
-			window.addObject(cube);
-		}
-		else {
-			scene.objects[0].transform.translation = point;
-			scene.objects[0].transform.scale = glm::vec3(0.2f, 0.2f, 0.2f);
-			scene.objects[0].transform.rotation = glm::quat(glm::vec3(10, 1 * i / 100.0f, 1 * i / 100.0f));
+			// draw circles into the image vor visualisation
+			cv::circle(camFrame, center, radius, cv::Scalar(0, 255, 0), 5);
+
+			glm::vec3 point = window.toScreenPoint(glm::vec2(center.x, center.y));
+			point *= 3;
+
+			if (scene.objects.size() < circles.size())
+			{
+				lwar::Object3d& cube = lwar::Object3d(lwar::Primitves::Cube);
+				cube.material.texture = lwar::Material::ColorGradient();
+
+				window.addObject(cube);
+			}
+			
+			lwar::Object3d& cube = scene.objects[i];
+
+			cube.transform.translation = point;
+			cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f) * (float)radius * 0.02f;
+			cube.transform.rotation = glm::quat(glm::vec3(0, 1 / 100.0f, 1 / 100.0f));
+			cube.visible = true;
 		}
 	}
+	else
+	{
+		scene.hideAllObjects();
+	}
 
-
+	// set the background of the window to the current camera image
 	window.background.material.texture = camFrame;
 
-	i++;
-
+	// check for keys
 	int key = window.getLastKey();
 	// escape == exit
 	if (key == 256)
@@ -127,9 +108,7 @@ void onUpdate(lwar::Window& window)
 
 int main()
 {
-	lwar::Renderer* renderer = new lwar::OpenGLRenderer(width, height, windowName);
-
-	lwar::Window window = lwar::Window(renderer);
+	lwar::Window window = lwar::Window(width, height, windowName);
 	window.onUpdate = onUpdate;
 
 	std::cout << "Opening Webcam device ..." << std::endl;
@@ -147,8 +126,6 @@ int main()
 
 	// starts the main loop
 	window.start();
-
-	delete(renderer);
 
 	return 0;
 }

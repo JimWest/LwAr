@@ -37,13 +37,19 @@
 
 namespace lwar
 {
+
+	enum RenderType
+	{
+		OpenGL
+	};
+
 	class Window
 	{
 
 	public:
 
 		Window();
-		Window(Renderer* renderer);
+		Window(int width, int height, std::string title, RenderType renderType = RenderType::OpenGL);
 		~Window();
 		void addObject(Object3d &object);
 		void start();
