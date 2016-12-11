@@ -6,6 +6,7 @@
 #include "glm.hpp"
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <direct.h>
 
 int width = 640;
 int height = 480;
@@ -151,7 +152,7 @@ void onUpdate(lwar::Window& window)
 	}
 
 
-	cubesOnCircles(window, scene, camFrame);
+	//cubesOnCircles(window, scene, camFrame);
 	//boundingBoxEllipse(window, scene, camFrame);
 
 	// set the background of the window to the current camera image
@@ -182,6 +183,20 @@ int main()
 
 	window.getScene().camera = camera;
 
+	char cCurrentPath[FILENAME_MAX];
+
+	if (!_getcwd(cCurrentPath, sizeof(cCurrentPath)))
+	{
+		return errno;
+	}
+
+	lwar::Object3d cube = lwar::Object3d("cube.obj");
+	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
+	cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f);
+	cube.transform.rotation = glm::quat(glm::vec3(0, 45, 45));
+	cube.material.texture = lwar::Material::ColorGradient();
+
+	window.addObject(cube);
 	// starts the main loop
 	window.start();
 

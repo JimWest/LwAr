@@ -117,12 +117,12 @@ namespace lwar
 
 		glGenBuffers(1, &(GLuint)object.vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, object.vbo);
-		glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), &object.vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(glm::vec3), &object.vertices[0], GL_STATIC_DRAW);
 
 		GLuint uvbuffer;
 		glGenBuffers(1, &(GLuint)object.uvbo);
 		glBindBuffer(GL_ARRAY_BUFFER, object.uvbo);
-		glBufferData(GL_ARRAY_BUFFER, object.uvs.size() * sizeof(float), &object.uvs[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, object.uvs.size() * sizeof(glm::vec2), &object.uvs[0], GL_STATIC_DRAW);
 	}
 
 
