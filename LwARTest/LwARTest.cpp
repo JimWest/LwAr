@@ -4,17 +4,14 @@
 #include "stdafx.h"
 #include "../LwAR/Window.h"
 #include "glm.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/quaternion.hpp"
-#include "gtx/quaternion.hpp"
-#include "gtx/euler_angles.hpp"
 #include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
 
-std::vector<cv::Vec3f> detectRedCircle(cv::Mat& image)
+std::vector<cv::Vec3f> detectRedCircles(cv::Mat& image)
 {
 	std::vector<cv::Vec3f> circles;
 	if (image.empty())
@@ -45,21 +42,9 @@ std::vector<cv::Vec3f> detectRedCircle(cv::Mat& image)
 	return circles;
 }
 
-
-void onUpdate(lwar::Window& window)
+void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 {
-	lwar::Renderer* renderer = window.getRenderer();
-	lwar::Scene& scene = window.getScene();
-	cv::Mat camFrame;
-
-	if (scene.camera.isOpened)
-	{
-		camFrame = scene.camera.retrieve();
-		// mirror on y axis so its like a mirror
-		cv::flip(camFrame, camFrame, 1);
-	}
-
-	std::vector<cv::Vec3f> circles = detectRedCircle(camFrame);
+	std::vector<cv::Vec3f> circles = detectRedCircles(camFrame);
 
 	// Loop over all detected circles and outline them on the original image
 	if (circles.size() != 0)
@@ -82,7 +67,7 @@ void onUpdate(lwar::Window& window)
 
 				window.addObject(cube);
 			}
-			
+
 			lwar::Object3d& cube = scene.objects[i];
 
 			cube.transform.translation = point;
@@ -95,6 +80,79 @@ void onUpdate(lwar::Window& window)
 	{
 		scene.hideAllObjects();
 	}
+}
+
+
+// taken from opencv example,
+// http://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/bounding_rotated_ellipses/bounding_rotated_ellipses.html
+
+void boundingBoxEllipse(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
+{
+	int thresh = 100;
+	int max_thresh = 255;
+	cv::RNG rng(12345);
+
+	cv::Mat greyImage;
+	cv::Mat threshold_output;
+	std::vector<cv::vector<cv::Point> > contours;
+	std::vector<cv::Vec4i> hierarchy;
+
+	cv::cvtColor(camFrame, greyImage, CV_BGR2GRAY);
+	cv::blur(greyImage, greyImage, cv::Size(3, 3));
+
+	// Detect edges using Threshold
+	cv::threshold(greyImage, threshold_output, thresh, 255, cv::THRESH_BINARY);
+	// Find contours
+	cv::findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+
+	// Find the rotated rectangles and ellipses for each contour
+	//std::vector<cv::RotatedRect> minRect(contours.size());
+	std::vector<cv::RotatedRect> minEllipse(contours.size());
+
+	for (int i = 0; i < contours.size(); i++)
+	{
+		//minRect[i] = cv::minAreaRect(cv::Mat(contours[i]));
+		if (contours[i].size() > 5)
+		{
+			minEllipse[i] = cv::fitEllipse(cv::Mat(contours[i]));
+		}
+	}
+
+	// Draw contours + rotated rects + ellipses
+	cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);
+	for (int i = 0; i< contours.size(); i++)
+	{
+		cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		// contour
+		//cv::drawContours(drawing, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+		// ellipse
+		cv::ellipse(drawing, minEllipse[i], color, 2, 8);
+		// rotated rectangle
+		//cv::Point2f rect_points[4]; minRect[i].points(rect_points);
+		//for (int j = 0; j < 4; j++)
+		//	line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
+	}
+
+	camFrame = drawing;
+}
+
+
+void onUpdate(lwar::Window& window)
+{
+	lwar::Renderer* renderer = window.getRenderer();
+	lwar::Scene& scene = window.getScene();
+	cv::Mat camFrame;
+
+	if (scene.camera.isOpened)
+	{
+		camFrame = scene.camera.retrieve();
+		// mirror on y axis so its like a mirror
+		cv::flip(camFrame, camFrame, 1);
+	}
+
+
+	cubesOnCircles(window, scene, camFrame);
+	//boundingBoxEllipse(window, scene, camFrame);
 
 	// set the background of the window to the current camera image
 	window.background.material.texture = camFrame;
