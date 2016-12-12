@@ -131,9 +131,9 @@ namespace lwar
 		// Initialize texture
 		cv::Mat font = cv::imread(texturePath);	
 		// don't know why but the font don't needs to be flipped, so flip it here so its the wright way later
-		cv::Mat flippedFont;
-		cv::flip(font, flippedFont, 0);
-		Text2DTextureID = matToTexture(flippedFont, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT);
+		//cv::Mat flippedFont;
+		//cv::flip(font, flippedFont, 0);
+		Text2DTextureID = matToTexture(font, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT);
 
 		// Initialize VBO
 		glGenBuffers(1, &Text2DVertexBufferID);
@@ -195,11 +195,11 @@ namespace lwar
 
 			vertices.push_back(vertex_up_left);
 			vertices.push_back(vertex_down_left);
-			vertices.push_back(vertex_up_right);
+			vertices.push_back(vertex_down_right);
 
 			vertices.push_back(vertex_down_right);
 			vertices.push_back(vertex_up_right);
-			vertices.push_back(vertex_down_left);
+			vertices.push_back(vertex_up_left);
 
 			char character = text[i];
 			float uv_x = (character % 16) / 16.0f;
@@ -211,11 +211,10 @@ namespace lwar
 			glm::vec2 uv_down_left = glm::vec2(uv_x, (uv_y + 1.0f / 16.0f));
 			UVs.push_back(uv_up_left);
 			UVs.push_back(uv_down_left);
-			UVs.push_back(uv_up_right);
-
 			UVs.push_back(uv_down_right);
-			UVs.push_back(uv_up_right);
-			UVs.push_back(uv_down_left);
+			UVs.push_back(uv_down_right);
+			UVs.push_back(uv_up_right);			
+			UVs.push_back(uv_up_left);
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, Text2DVertexBufferID);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), &vertices[0], GL_STATIC_DRAW);
