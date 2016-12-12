@@ -58,6 +58,8 @@ namespace lwar
 		// Initialise glfw
 		glfwInit();
 
+		glfwWindowHint(GLFW_SAMPLES, 4);
+
 		// Create a window
 		window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
 		glfwMakeContextCurrent(window);
@@ -119,23 +121,30 @@ namespace lwar
 			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
 		}
 
-		initText2D();
+		//initText2D("Holstein.png");
+		initText2D("calibri.bmp");
+		
 	}
 
 	void OpenGLRenderer::initText2D(const char * texturePath) {
 
 		// Initialize texture
-		Text2DTextureID = loadDDS(texturePath);
+		cv::Mat font = cv::imread(texturePath);	
+		// don't know why but the font don't needs to be flipped, so flip it here so its the wright way later
+		cv::Mat flippedFont;
+		cv::flip(font, flippedFont, 0);
+		Text2DTextureID = matToTexture(flippedFont, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT);
 
 		// Initialize VBO
 		glGenBuffers(1, &Text2DVertexBufferID);
 		glGenBuffers(1, &Text2DUVBufferID);
 
 		// Initialize Shader
-		Text2DShaderID = LoadShaders("TextVertexShader.vertexshader", "TextVertexShader.fragmentshader");
+		Text2DShaderID = loadShaders("shaders/TextVertexShader.vertexshader", "shaders/TextVertexShader.fragmentshader");
 
 		// Initialize uniforms' IDs
 		Text2DUniformID = glGetUniformLocation(Text2DShaderID, "myTextureSampler");
+		//Text2DUniformID = glGetUniformLocation(unlitShaderID, "myTextureSampler");
 
 	}
 
@@ -167,45 +176,6 @@ namespace lwar
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	}
-
-	GLuint raw_texture_load(Material mat)
-	{
-		GLuint textureID;
-
-		// allocate a texture name
-		glGenTextures(1, &textureID);
-
-		// select our current texture
-		glBindTexture(GL_TEXTURE_2D, textureID);
-
-		// select modulate to mix texture with color for shading
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_DECAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_DECAL);
-
-		// when texture area is small, bilinear filter the closest mipmap
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		// when texture area is large, bilinear filter the first mipmap
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		// texture should tile
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		// build our texture mipmaps
-		glTexImage2D(GL_TEXTURE_2D,     // Type of texture
-			0,                 // Pyramid level (for mip-mapping) - 0 is the top level
-			GL_RGB,            // Internal colour format to convert to
-			512,          // Image width  i.e. 640 for Kinect in standard mode
-			512,          // Image height i.e. 480 for Kinect in standard mode
-			0,                 // Border width in pixels (can either be 1 or 0)
-			GL_BGR, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
-			GL_UNSIGNED_BYTE,  // Image data type
-			mat.texture.ptr());
-
-		return textureID;
 	}
 
 	
@@ -272,7 +242,10 @@ namespace lwar
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBlendFunc(GL_ONE, GL_CONSTANT_ALPHA);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendColor(1.0, 0.0, 0.0, 1.0);
 
 		// Draw call
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
@@ -343,7 +316,6 @@ namespace lwar
 		// Convert image and depth data to OpenGL textures
 		//GLuint textureID = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
 		GLuint textureID = matToTexture(object.material.texture, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT);
-		//GLuint textureID = raw_texture_load(object->material);
 		// Draw the textures
 		// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.	
 
@@ -427,7 +399,17 @@ namespace lwar
 
 		// Create the shaders
 		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+
+		GLenum err;
+		if ((err = glGetError()) != GL_NO_ERROR) {
+			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+		}
+
 		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+		if ((err = glGetError()) != GL_NO_ERROR) {
+			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+		}
+
 
 		// Read the Vertex Shader code from the file
 		std::string VertexShaderCode;
@@ -527,54 +509,64 @@ namespace lwar
 
 		// Bind to our texture handle
 		glBindTexture(GL_TEXTURE_2D, textureID);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		// Catch silly-mistake texture interpolation method for magnification
-		if (magFilter == GL_LINEAR_MIPMAP_LINEAR ||
-			magFilter == GL_LINEAR_MIPMAP_NEAREST ||
-			magFilter == GL_NEAREST_MIPMAP_LINEAR ||
-			magFilter == GL_NEAREST_MIPMAP_NEAREST)
-		{
-			std::cout << "You can't use MIPMAPs for magnification - setting filter to GL_LINEAR" << std::endl;
-			magFilter = GL_LINEAR;
-		}
+		//// Catch silly-mistake texture interpolation method for magnification
+		//if (magFilter == GL_LINEAR_MIPMAP_LINEAR ||
+		//	magFilter == GL_LINEAR_MIPMAP_NEAREST ||
+		//	magFilter == GL_NEAREST_MIPMAP_LINEAR ||
+		//	magFilter == GL_NEAREST_MIPMAP_NEAREST)
+		//{
+		//	std::cout << "You can't use MIPMAPs for magnification - setting filter to GL_LINEAR" << std::endl;
+		//	magFilter = GL_LINEAR;
+		//}
 
-		// Set texture interpolation methods for minification and magnification
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+		//// Set texture interpolation methods for minification and magnification
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 
-		// Set texture clamping method
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapFilter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapFilter);
+		//// Set texture clamping method
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapFilter);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapFilter);
 
 		// Set incoming texture format to:
 		// GL_BGR       for CV_CAP_OPENNI_BGR_IMAGE,
 		// GL_LUMINANCE for CV_CAP_OPENNI_DISPARITY_MAP,
 		// Work out other mappings as required ( there's a list in comments in main() )
-		GLenum inputColourFormat = GL_BGR;
-		if (mat.channels() == 1)
-		{
-			inputColourFormat = GL_LUMINANCE;
-		}
+		//GLenum inputColourFormat = GL_BGR;
+		//if (mat.channels() == 1)
+		//{
+		//	inputColourFormat = GL_LUMINANCE;
+		//}
 
-		// Create the texture
-		glTexImage2D(GL_TEXTURE_2D,     // Type of texture
-			0,                 // Pyramid level (for mip-mapping) - 0 is the top level
-			GL_RGB,            // Internal colour format to convert to
-			mat.cols,          // Image width  i.e. 640 for Kinect in standard mode
-			mat.rows,          // Image height i.e. 480 for Kinect in standard mode
-			0,                 // Border width in pixels (can either be 1 or 0)
-			inputColourFormat, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
-			GL_UNSIGNED_BYTE,  // Image data type
-			flippedMat.ptr());        // The actual image data itself
+		//// Create the texture
+		//glTexImage2D(GL_TEXTURE_2D,     // Type of texture
+		//	0,                 // Pyramid level (for mip-mapping) - 0 is the top level
+		//	GL_RGB,            // Internal colour format to convert to
+		//	mat.cols,          // Image width  i.e. 640 for Kinect in standard mode
+		//	mat.rows,          // Image height i.e. 480 for Kinect in standard mode
+		//	0,                 // Border width in pixels (can either be 1 or 0)
+		//	inputColourFormat, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+		//	GL_UNSIGNED_BYTE,  // Image data type
+		//	flippedMat.ptr());        // The actual image data itself
 
 							   // If we're using mipmaps then generate them. Note: This requires OpenGL 3.0 or higher
-		if (minFilter == GL_LINEAR_MIPMAP_LINEAR ||
-			minFilter == GL_LINEAR_MIPMAP_NEAREST ||
-			minFilter == GL_NEAREST_MIPMAP_LINEAR ||
-			minFilter == GL_NEAREST_MIPMAP_NEAREST)
-		{
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
+		//if (minFilter == GL_LINEAR_MIPMAP_LINEAR ||
+		//	minFilter == GL_LINEAR_MIPMAP_NEAREST ||
+		//	minFilter == GL_NEAREST_MIPMAP_LINEAR ||
+		//	minFilter == GL_NEAREST_MIPMAP_NEAREST)
+		//{
+		//	glGenerateMipmap(GL_TEXTURE_2D);
+		//}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mat.cols, mat.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, flippedMat.ptr());
+
+		// ... nice trilinear filtering.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		return textureID;
 	}

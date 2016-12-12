@@ -71,6 +71,10 @@ namespace lwar
 			if (background.visible)
 				_renderer->drawObject(background, true);
 
+
+			//_renderer->drawText("Test", 0, 0, 16);
+			_renderer->drawText("!ABCDEFGHAJKLMOPQRSTUVWXYZ", 10, 500, 30);
+
 			for (int i = 0; i < _scene.objects.size(); i++)
 			{
 				if (_scene.objects.at(i).visible)

@@ -14,6 +14,7 @@ namespace lwar
 		virtual ~Renderer() {};
 		virtual void initObject(Object3d& object) {};
 		virtual void preDraw() {};
+		virtual void drawText(const char * text, int x, int y, int size) {};
 		virtual void drawObject(Object3d& object, bool ignoreDepth = false) {};
 		virtual void postDraw() {};
 		virtual int getWindowWidth() = 0;
