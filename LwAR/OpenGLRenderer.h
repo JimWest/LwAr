@@ -33,6 +33,7 @@ namespace lwar
 
 		void initObject(Object3d& object) override;
 		void preDraw() override;
+		void drawText(const char * text, int x, int y, int size);
 		void drawObject(Object3d& object, bool ignoreDepth = false) override;
 		void postDraw() override;
 		int getWindowWidth() override;
@@ -55,7 +56,14 @@ namespace lwar
 		GLuint standardShaderID;
 		GLuint unlitShaderID;
 
+		unsigned int Text2DTextureID;
+		unsigned int Text2DVertexBufferID;
+		unsigned int Text2DUVBufferID;
+		unsigned int Text2DShaderID;
+		unsigned int Text2DUniformID;
+
 		void initGL();
+		void initText2D(const char * texturePath);
 		GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
 		static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
 		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
