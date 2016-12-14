@@ -121,20 +121,56 @@ void boundingBoxEllipse(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFr
 
 	// Draw contours + rotated rects + ellipses
 	cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);
-	for (int i = 0; i< contours.size(); i++)
+	for (int i = 0; i < contours.size(); i++)
 	{
 		cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 		// contour
 		cv::drawContours(drawing, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
 		// ellipse
 		cv::ellipse(drawing, minEllipse[i], color, 2, 8);
-		 //rotated rectangle
+		//rotated rectangle
 		cv::Point2f rect_points[4]; minRect[i].points(rect_points);
 		for (int j = 0; j < 4; j++)
 			line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
 	}
 
 	camFrame = drawing;
+}
+
+
+void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
+{
+
+	float faceScale = 1.8f;
+	int faceMinNeightbors = 5;
+	cv::Size size = cv::Size(50, 50);
+
+
+	cv::CascadeClassifier faceCascade = cv::CascadeClassifier("D:\\Eigene Dateien\\HSKA\\1. Semester\\Projektarbeit\\LwAR\\ExternalLibs\\opencv2\\build\\share\\OpenCV\\haarcascades\\haarcascade_frontalcatface.xml");
+
+	cv::Mat gray;
+	cv::cvtColor(camFrame, gray, cv::COLOR_RGB2GRAY);
+	cv::equalizeHist(gray, gray);
+
+	std::vector<cv::Rect> objects;
+
+	// Detect faces
+	faceCascade.detectMultiScale(
+		gray,
+		objects,
+		faceScale,
+		faceMinNeightbors,
+		0, size);
+
+
+	for (int i = 0; i < objects.size(); ++i)
+	{
+
+		cv::Point faceCenter = cv::Point2d((int)(objects[i].x + objects[i].width * 0.5), (int)(objects[i].x + objects[i].width * 0.5));
+		cv::Size faceAxes = cv::Size((int)(objects[i].width * 0.4), (int)(objects[i].height * 0.5));
+		cv::ellipse(camFrame, faceCenter, faceAxes, 0, 0, 360, cv::Scalar(255, 0, 255), 4);
+		
+	}
 }
 
 
@@ -154,6 +190,7 @@ void onUpdate(lwar::Window& window)
 
 	//cubesOnCircles(window, scene, camFrame);
 	//boundingBoxEllipse(window, scene, camFrame);
+	getFace(window, scene, camFrame);
 
 	// set the background of the window to the current camera image
 	window.background.material.texture = camFrame;
