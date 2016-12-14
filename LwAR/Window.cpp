@@ -114,7 +114,12 @@ namespace lwar
 		return _lastKey;
 	}
 
-	glm::vec3 Window::toScreenPoint(glm::vec2 position)
+	glm::vec2 Window::worldToScreenPoint(glm::vec3 position)
+	{
+		return glm::vec2();
+	}
+
+	glm::vec3 Window::screenToWorldPoint(glm::vec2 position)
 	{
 		double x = 2.0 * position.x / _width - 1;
 		double y = -2.0 * position.y / _height + 1;
@@ -126,8 +131,15 @@ namespace lwar
 		return  glm::vec3(point3D.x, point3D.y, 0);
 	}
 
-	glm::vec2 Window::toScenePoint(glm::vec3 position)
+	float Window::screenToWorldRadius(float radius)
 	{
-		return glm::vec2();
+		return radius / (_height / 2.0f);
 	}
+
+	float Window::worldToScreenRadius(float radius)
+	{
+		return radius * (_height / 2.0f);
+	}
+
+
 }

@@ -8,6 +8,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <direct.h>
 
+#include <gtc/quaternion.hpp>
+#include <gtx/quaternion.hpp>
+#include <gtx/euler_angles.hpp>
+
 int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
@@ -58,7 +62,7 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 			// draw circles into the image vor visualisation
 			cv::circle(camFrame, center, radius, cv::Scalar(0, 255, 0), 5);
 
-			glm::vec3 point = window.toScreenPoint(glm::vec2(center.x, center.y));
+			glm::vec3 point = window.screenToWorldPoint(glm::vec2(center.x, center.y));
 			point *= 3;
 
 			if (scene.objects.size() < circles.size())
@@ -71,9 +75,18 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 
 			lwar::Object3d& cube = scene.objects[i];
 
+			// move the object to the position of the circle
 			cube.transform.translation = point;
-			cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f) * (float)radius * 0.02f;
-			cube.transform.rotation = glm::quat(glm::vec3(0, 1 / 100.0f, 1 / 100.0f));
+
+			// set the scale to the radius so it fits the whole circle
+			cube.transform.scale = glm::vec3(1.0f) *  window.screenToWorldRadius(radius);
+
+			// set everything to the same rotation
+			cube.transform.rotation = scene.objects[0].transform.rotation;
+
+			// rotate it a bit
+			cube.transform.rotate(glm::radians(2.0f), glm::vec3(0, 1, 1));
+
 			cube.visible = true;
 		}
 	}
@@ -169,7 +182,7 @@ void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 		cv::Point faceCenter = cv::Point2d((int)(objects[i].x + objects[i].width * 0.5), (int)(objects[i].x + objects[i].width * 0.5));
 		cv::Size faceAxes = cv::Size((int)(objects[i].width * 0.4), (int)(objects[i].height * 0.5));
 		cv::ellipse(camFrame, faceCenter, faceAxes, 0, 0, 360, cv::Scalar(255, 0, 255), 4);
-		
+
 	}
 }
 
@@ -188,9 +201,10 @@ void onUpdate(lwar::Window& window)
 	}
 
 
-	//cubesOnCircles(window, scene, camFrame);
+	cubesOnCircles(window, scene, camFrame);
 	//boundingBoxEllipse(window, scene, camFrame);
-	getFace(window, scene, camFrame);
+	//getFace(window, scene, camFrame);
+
 
 	// set the background of the window to the current camera image
 	window.background.material.texture = camFrame;

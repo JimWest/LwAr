@@ -64,8 +64,14 @@ namespace lwar
 		Scene& getScene();
 		int getLastKey();
 
-		glm::vec3 toScreenPoint(glm::vec2 position);
-		glm::vec2 toScenePoint(glm::vec3 position);
+		glm::vec2 worldToScreenPoint(glm::vec3 position);
+		glm::vec3 screenToWorldPoint(glm::vec2 position);
+
+		float screenToWorldRadius(float radius);
+		float worldToScreenRadius(float radius);
+
+		//glm::vec2 Window::worldToScreenScale(glm::vec3 scale);
+		//glm::vec3 Window::screenToWorldScale(glm::vec2 scale);
 
 		std::function<void(lwar::Window& window, int key, int scancode, int action, int mods)> onKeyboardInput;
 		std::function<void(lwar::Window& window)> onUpdate;
