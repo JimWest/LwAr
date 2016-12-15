@@ -22,13 +22,21 @@ namespace lwar
 
 	void Camera::init()
 	{
+		std::cout << "Opening Webcam device ..." << std::endl;
 		capture = cv::VideoCapture(id);
 		//	capture.open(id);
 		isOpened = capture.isOpened();
 
-		capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
-		capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
-		capture.set(CV_CAP_PROP_FPS, fps);
+		if (isOpened)
+		{
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
+			capture.set(CV_CAP_PROP_FPS, fps);
+		}
+		else
+		{
+			std::cout << "Opening Webcam device ..." << std::endl;
+		}
 	}
 
 

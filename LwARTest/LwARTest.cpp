@@ -8,93 +8,11 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <direct.h>
 
-#include <gtc/quaternion.hpp>
-#include <gtx/quaternion.hpp>
-#include <gtx/euler_angles.hpp>
 
 int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
 
-std::vector<cv::Vec3f> detectRedCircles(cv::Mat& image)
-{
-	std::vector<cv::Vec3f> circles;
-	if (image.empty())
-		return circles;
-
-	cv::medianBlur(image, image, 3);
-
-	// Convert input image to HSV
-	cv::Mat hsv_image;
-	cv::cvtColor(image, hsv_image, cv::COLOR_BGR2HSV);
-
-	// Threshold the HSV image, keep only the red pixels
-	cv::Mat lower_red_hue_range;
-	cv::Mat upper_red_hue_range;
-	cv::inRange(hsv_image, cv::Scalar(0, 100, 100), cv::Scalar(10, 255, 255), lower_red_hue_range);
-
-	cv::inRange(hsv_image, cv::Scalar(160, 100, 100), cv::Scalar(179, 255, 255), upper_red_hue_range);
-
-	// Combine the above two images
-	cv::Mat red_hue_image;
-	cv::addWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0, red_hue_image);
-
-	cv::GaussianBlur(red_hue_image, red_hue_image, cv::Size(9, 9), 2, 2);
-
-	// Use the Hough transform to detect circles in the combined threshold image
-	cv::HoughCircles(red_hue_image, circles, CV_HOUGH_GRADIENT, 2, red_hue_image.rows / 8, 30, 100, 0, 100);
-
-	return circles;
-}
-
-void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
-{
-	std::vector<cv::Vec3f> circles = detectRedCircles(camFrame);
-
-	// Loop over all detected circles and outline them on the original image
-	if (circles.size() != 0)
-	{
-		for (int i = 0; i < circles.size(); ++i)
-		{
-			cv::Point center(std::round(circles[i][0]), std::round(circles[i][1]));
-			int radius = std::round(circles[i][2]);
-
-			// draw circles into the image vor visualisation
-			cv::circle(camFrame, center, radius, cv::Scalar(0, 255, 0), 5);
-
-			glm::vec3 point = window.screenToWorldPoint(glm::vec2(center.x, center.y));
-			point *= 3;
-
-			if (scene.objects.size() < circles.size())
-			{
-				lwar::Object3d& cube = lwar::Object3d(lwar::Primitves::Cube);
-				cube.material.texture = lwar::Material::ColorGradient();
-
-				window.addObject(cube);
-			}
-
-			lwar::Object3d& cube = scene.objects[i];
-
-			// move the object to the position of the circle
-			cube.transform.translation = point;
-
-			// set the scale to the radius so it fits the whole circle
-			cube.transform.scale = glm::vec3(1.0f) *  window.screenToWorldRadius(radius);
-
-			// set everything to the same rotation
-			cube.transform.rotation = scene.objects[0].transform.rotation;
-
-			// rotate it a bit
-			cube.transform.rotate(glm::radians(2.0f), glm::vec3(0, 1, 1));
-
-			cube.visible = true;
-		}
-	}
-	else
-	{
-		scene.hideAllObjects();
-	}
-}
 
 
 // taken from opencv example,
@@ -151,40 +69,6 @@ void boundingBoxEllipse(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFr
 }
 
 
-void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
-{
-
-	float faceScale = 1.8f;
-	int faceMinNeightbors = 5;
-	cv::Size size = cv::Size(50, 50);
-
-
-	cv::CascadeClassifier faceCascade = cv::CascadeClassifier("D:\\Eigene Dateien\\HSKA\\1. Semester\\Projektarbeit\\LwAR\\ExternalLibs\\opencv2\\build\\share\\OpenCV\\haarcascades\\haarcascade_frontalcatface.xml");
-
-	cv::Mat gray;
-	cv::cvtColor(camFrame, gray, cv::COLOR_RGB2GRAY);
-	cv::equalizeHist(gray, gray);
-
-	std::vector<cv::Rect> objects;
-
-	// Detect faces
-	faceCascade.detectMultiScale(
-		gray,
-		objects,
-		faceScale,
-		faceMinNeightbors,
-		0, size);
-
-
-	for (int i = 0; i < objects.size(); ++i)
-	{
-
-		cv::Point faceCenter = cv::Point2d((int)(objects[i].x + objects[i].width * 0.5), (int)(objects[i].x + objects[i].width * 0.5));
-		cv::Size faceAxes = cv::Size((int)(objects[i].width * 0.4), (int)(objects[i].height * 0.5));
-		cv::ellipse(camFrame, faceCenter, faceAxes, 0, 0, 360, cv::Scalar(255, 0, 255), 4);
-
-	}
-}
 
 
 void onUpdate(lwar::Window& window)
@@ -199,9 +83,6 @@ void onUpdate(lwar::Window& window)
 		// mirror on y axis so its like a mirror
 		cv::flip(camFrame, camFrame, 1);
 	}
-
-
-	cubesOnCircles(window, scene, camFrame);
 	//boundingBoxEllipse(window, scene, camFrame);
 	//getFace(window, scene, camFrame);
 
