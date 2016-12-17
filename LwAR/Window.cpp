@@ -140,7 +140,7 @@ namespace lwar
 
 		glm::vec4 point3D = glm::vec4(x, y, 0, 1);
 		point3D = viewProjectionInverse * point3D;
-		return  glm::vec3(point3D.x, point3D.y, 0);
+		return  glm::vec3(point3D.x, point3D.y, 0) * worldCameraDist;
 	}
 
 	float Window::screenToWorldDistance(float radius)

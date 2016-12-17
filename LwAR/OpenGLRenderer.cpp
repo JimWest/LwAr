@@ -63,6 +63,9 @@ namespace lwar
 		glfwInit();
 
 		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 		// Create a window
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
@@ -72,6 +75,7 @@ namespace lwar
 		{
 			cout << "Failed to open window!" << endl;
 			glfwTerminate();
+			getchar();
 			exit(-1);
 		}
 
@@ -250,10 +254,13 @@ namespace lwar
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendColor(1.0, 0.0, 0.0, 1.0);
 
+		glDisable(GL_DEPTH_TEST);
+
 		// Draw call
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
 		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

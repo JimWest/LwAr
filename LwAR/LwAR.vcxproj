@@ -100,7 +100,8 @@
       <AdditionalLibraryDirectories>$(ProjectDir)opencv2\build\x86\vc12\lib;$(ProjectDir)openglWrappers\glfw\lib;$(ProjectDir)openglWrappers\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(ProjectDir)shaders" "$(TargetDir)shaders"  /s /i /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

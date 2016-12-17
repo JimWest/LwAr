@@ -59,11 +59,10 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 			cv::circle(camFrame, center, radius, cv::Scalar(0, 255, 0), 5);
 
 			glm::vec3 point = window.screenToWorldPoint(glm::vec2(center.x, center.y));
-			point *= 3;
 
 			if (scene.objects.size() < circles.size())
 			{
-				lwar::Object3d& cube = lwar::Object3d(lwar::Primitves::Cube);
+				lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
 				cube.material.texture = lwar::Material::ColorGradient();
 
 				window.addObject(cube);
@@ -77,10 +76,10 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 			// set the scale to the radius so it fits the whole circle
 			cube.transform.scale = glm::vec3(1.0f) *  window.screenToWorldDistance(radius);
 
-			// set everything to the same rotation
+			//// set everything to the same rotation
 			cube.transform.rotation = scene.objects[0].transform.rotation;
 
-			// rotate it a bit
+			//// rotate it a bit
 			cube.transform.rotate(glm::radians(2.0f), glm::vec3(0, 1, 1));
 
 			cube.visible = true;

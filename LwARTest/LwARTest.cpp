@@ -85,6 +85,11 @@ void onUpdate(lwar::Window& window)
 	//boundingBoxEllipse(window, scene, camFrame);
 	//getFace(window, scene, camFrame);
 
+	lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
+	//cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f);
+	//cube.transform.rotation = glm::quat(glm::vec3(0, 45, 45));
+	//cube.material.texture = lwar::Material::ColorGradient();
+	window.addObject(cube);
 
 	// set the background of the window to the current camera image
 	window.setBackground(camFrame);
