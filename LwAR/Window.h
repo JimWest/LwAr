@@ -36,8 +36,6 @@
 #include "Object3d.h"
 #include "Scene.h"
 
-// TODO: TIME, KEYS/ MOUSE
-
 namespace lwar
 {
 
@@ -50,6 +48,7 @@ namespace lwar
 	{
 
 	public:
+		std::function<void(lwar::Window& window)> onUpdate;
 
 		Window();
 		Window(int width, int height, std::string title, RenderType renderType = RenderType::OpenGL);
@@ -58,36 +57,36 @@ namespace lwar
 		void start();
 		void stop();
 
-		void onRendererKeyInput(int key);
-
 		Renderer* getRenderer() const;
 		Scene& getScene();
 		int getLastKey();
+		cv::Mat getBackground();
+		void setBackground(cv::Mat background);
 
 		glm::vec2 worldToScreenPoint(glm::vec3 position);
 		glm::vec3 screenToWorldPoint(glm::vec2 position);
+		float screenToWorldDistance(float distance);
+		float worldToScreenDistance(float distance);
 
-		float screenToWorldRadius(float radius);
-		float worldToScreenRadius(float radius);
-
-		//glm::vec2 Window::worldToScreenScale(glm::vec3 scale);
-		//glm::vec3 Window::screenToWorldScale(glm::vec2 scale);
-
-		std::function<void(lwar::Window& window, int key, int scancode, int action, int mods)> onKeyboardInput;
-		std::function<void(lwar::Window& window)> onUpdate;
-		Object3d background = Object3d(Primitves::Quad);
 
 	private:
 
-		int _width = 640;
-		int _height = 480;
-		bool _running = false;
-		int _lastKey = 0;
-		Renderer* _renderer;
-		Scene _scene;
+		int width = 640;
+		int height = 480;
+		float fov = 45.0f;
+		float zNear = 0.1f;
+		float zFar = 200.0f;
+		float worldCameraDist = 3.0f;
+		bool running = false;
+		int lastKey = 0;
+		Renderer* renderer;
+		Scene scene;
 		glm::mat4 projectionMatrix;
 		glm::mat4 viewMatrix;
+		Object3d background = Object3d(Primitves::Quad);
+		void onRendererKeyInput(int key);
 
 	};
+
 }
 

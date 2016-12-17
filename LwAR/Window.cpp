@@ -13,75 +13,75 @@ namespace lwar
 
 	Window::Window()
 	{
-		_running = false;
+		running = false;
 	}
 
 	Window::Window(int width, int height, std::string title, RenderType renderType)
 	{
-		_running = true;
+		running = true;
 
 		switch (renderType)
 		{
 		case RenderType::OpenGL:
-			_renderer = new lwar::OpenGLRenderer(width, height, title);
+			renderer = new lwar::OpenGLRenderer(width, height, title, fov, zNear, zFar, worldCameraDist);
 			break;
 		}
 
-		// bin is needed so we can call  member functions
-		_renderer->onKeyboardInput = std::bind(&Window::onRendererKeyInput, this, std::placeholders::_1);
-		_renderer->initObject(background);
+		// bind is needed so we can call  member functions
+		renderer->onKeyboardInput = std::bind(&Window::onRendererKeyInput, this, std::placeholders::_1);
+		renderer->initObject(background);
 
 		// calculate the needed scale of the background so it fits on the whole screen
 		float aspectRatio = (height) ? float(width) / float(height) : float(height) / float(width);
 
-		// size of the frostum at the distance of the background
-		float distance = 3.0f;
-		float frustumHeight = distance * tan(glm::radians(45.0f * 0.5f));
+		// size of the frostum at the distance of the background	
+		float frustumHeight = worldCameraDist * tan(glm::radians(fov * 0.5f));
 		float frustumWidth = frustumHeight * aspectRatio;
 
 		background.transform.scale = glm::vec3(frustumWidth, frustumHeight, 1.0f);
 
-		projectionMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 200.0f);
+		// todo: add this as variable??
+		projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, zNear, zFar);
 		viewMatrix = glm::mat3(1.0f);
 	}
 
 
 	Window::~Window()
 	{
-		delete(_renderer);
+		delete(renderer);
 	}
 
 	void Window::addObject(Object3d& object)
 	{
-		_renderer->initObject(object);
-		_scene.objects.push_back(object);
+		renderer->initObject(object);
+		scene.objects.push_back(object);
 	}
 
 	// only returns if the application should be closed
 	void Window::start()
 	{
-		while (_running)
+		while (running)
 		{
 			if (onUpdate)
 				onUpdate(*this);
 
-			_renderer->preDraw();
+			renderer->preDraw();
 
 			// always render background first and ignore depth so other objects cant intercept with it
 			if (background.visible)
-				_renderer->drawObject(background, true);
+				renderer->drawObject(background, true);
 
 
 			//_renderer->drawText("Test", 0, 0, 16);
-			_renderer->drawText("!ABCDEFGHAJKLMOPQRSTUVWXYZ", 10, 500, 30);
+			renderer->drawText("!ABCDEFGHAJKLMOPQRSTUVWXYZ", 10, 500, 30);
 
-			for (int i = 0; i < _scene.objects.size(); i++)
+			for (int i = 0; i < scene.objects.size(); i++)
 			{
-				if (_scene.objects.at(i).visible)
-					_renderer->drawObject(_scene.objects.at(i));
+				if (scene.objects.at(i).visible)
+					renderer->drawObject(scene.objects.at(i));
 			}
 
-			_renderer->postDraw();
+			renderer->postDraw();
 			//Sleep(100);
 		}
 
@@ -89,29 +89,39 @@ namespace lwar
 
 	void Window::stop()
 	{
-		_running = false;
+		running = false;
 	}
 
 	void Window::onRendererKeyInput(int key)
 	{
 		std::cout << std::to_string(key) << std::endl;
-		_lastKey = key;
+		lastKey = key;
 	}
 
 
 	Renderer* Window::getRenderer() const
 	{
-		return _renderer;
+		return renderer;
 	}
 
 	Scene& Window::getScene()
 	{
-		return _scene;
+		return scene;
 	}
 
 	int Window::getLastKey()
 	{
-		return _lastKey;
+		return lastKey;
+	}
+
+	cv::Mat Window::getBackground()
+	{
+		return background.material.texture;
+	}
+
+	void Window::setBackground(cv::Mat background)
+	{
+		this->background.material.texture = background;
 	}
 
 	glm::vec2 Window::worldToScreenPoint(glm::vec3 position)
@@ -121,8 +131,8 @@ namespace lwar
 
 	glm::vec3 Window::screenToWorldPoint(glm::vec2 position)
 	{
-		double x = 2.0 * position.x / _width - 1;
-		double y = -2.0 * position.y / _height + 1;
+		double x = 2.0 * position.x / width - 1;
+		double y = -2.0 * position.y / height + 1;
 		glm::mat4 viewProjectionInverse =
 			glm::inverse(projectionMatrix *	viewMatrix);
 
@@ -131,14 +141,14 @@ namespace lwar
 		return  glm::vec3(point3D.x, point3D.y, 0);
 	}
 
-	float Window::screenToWorldRadius(float radius)
+	float Window::screenToWorldDistance(float radius)
 	{
-		return radius / (_height / 2.0f);
+		return radius / (height / 2.0f);
 	}
 
-	float Window::worldToScreenRadius(float radius)
+	float Window::worldToScreenDistance(float radius)
 	{
-		return radius * (_height / 2.0f);
+		return radius * (height / 2.0f);
 	}
 
 

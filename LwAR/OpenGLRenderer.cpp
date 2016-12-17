@@ -9,11 +9,15 @@ namespace lwar
 		initGL();
 	}
 
-	OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle)
+	OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle, float fov, float zNear , float zFar, float worldCameraDist)
 	{
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
 		this->windowTitle = windowTitle;
+		this->fov = fov;
+		this->zNear = zNear;
+		this->zFar = zFar;
+		this->worldCameraDist = worldCameraDist;
 		initGL();
 	}
 
@@ -61,10 +65,10 @@ namespace lwar
 		glfwWindowHint(GLFW_SAMPLES, 4);
 
 		// Create a window
-		window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
-		glfwMakeContextCurrent(window);
+		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
+		glfwMakeContextCurrent(glfwWindow);
 
-		if (!window)
+		if (!glfwWindow)
 		{
 			cout << "Failed to open window!" << endl;
 			glfwTerminate();
@@ -72,11 +76,11 @@ namespace lwar
 		}
 
 		// Specify the callback function for key presses/releases
-		glfwSetWindowUserPointer(window, this);
-		glfwSetKeyCallback(window, keyCallback);
+		glfwSetWindowUserPointer(glfwWindow, this);
+		glfwSetKeyCallback(glfwWindow, keyCallback);
 
-		glfwSetWindowSizeCallback(window, windowSizeCallback);
-		glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+		glfwSetWindowSizeCallback(glfwWindow, windowSizeCallback);
+		glfwSetFramebufferSizeCallback(glfwWindow, framebufferSizeCallback);
 
 		//  Initialise glew (must occur after window creation or glew will error)
 		GLenum err = glewInit();
@@ -98,7 +102,7 @@ namespace lwar
 		// gluPerspective(fieldOfView/2.0f, width/height , near, far);
 		// We do it this way simply to avoid requiring glu.h
 		aspectRatio = (windowWidth > windowHeight) ? float(windowWidth) / float(windowHeight) : float(windowHeight) / float(windowWidth);
-		GLfloat fH = tan(float(fieldOfView / 360.0f * 3.14159f)) * zNear;
+		GLfloat fH = tan(float(fov / 360.0f * 3.14159f)) * zNear;
 		GLfloat fW = fH * aspectRatio;
 		glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 
@@ -145,7 +149,6 @@ namespace lwar
 		// Initialize uniforms' IDs
 		Text2DUniformID = glGetUniformLocation(Text2DShaderID, "myTextureSampler");
 		//Text2DUniformID = glGetUniformLocation(unlitShaderID, "myTextureSampler");
-
 	}
 
 	void OpenGLRenderer::initObject(Object3d& object)
@@ -172,7 +175,7 @@ namespace lwar
 
 	void OpenGLRenderer::preDraw()
 	{
-		quit = glfwWindowShouldClose(window);
+		quit = glfwWindowShouldClose(glfwWindow);
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -275,8 +278,8 @@ namespace lwar
 		glUseProgram(shaderId);
 
 		// Camera matrix
-		glm::mat4 projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, zNear, zFar);
-		glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+		glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, zNear, zFar);
+		glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, worldCameraDist),
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -374,7 +377,7 @@ namespace lwar
 
 	void OpenGLRenderer::postDraw()
 	{
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(glfwWindow);
 		glfwPollEvents();
 
 		// check OpenGL error

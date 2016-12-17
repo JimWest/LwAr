@@ -61,6 +61,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\LwAR.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -183,6 +184,8 @@
   <ItemGroup>
     <None Include="shaders\StandardShader.frag" />
     <None Include="shaders\StandardShader.vert" />
+    <None Include="shaders\TextVertexShader.fragmentshader" />
+    <None Include="shaders\TextVertexShader.vertexshader" />
     <None Include="shaders\UnlitShader.frag" />
     <None Include="shaders\UnlitShader.vert" />
   </ItemGroup>

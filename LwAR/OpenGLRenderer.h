@@ -28,7 +28,7 @@ namespace lwar
 	{
 	public:
 		OpenGLRenderer();
-		OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle);
+		OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle, float fov = 45.0f, float zNear = 0.1f, float zFar = 200.0f, float worldCameraDist = 3.0f);
 		~OpenGLRenderer();
 
 		void initObject(Object3d& object) override;
@@ -49,10 +49,11 @@ namespace lwar
 		GLint windowWidth = 640;     // Define our window width
 		GLint windowHeight = 480;     // Define our window height
 		GLfloat aspectRatio;
-		GLfloat fieldOfView = 45.0f;   // FoV
-		GLfloat zNear = 0.1f;    // Near clip plane
-		GLfloat zFar = 200.0f;  // Far clip plane
-		GLFWwindow  *window;
+		GLfloat fov;   
+		GLfloat zNear;  
+		GLfloat zFar;
+		float worldCameraDist;
+		GLFWwindow  *glfwWindow;
 		GLuint standardShaderID;
 		GLuint unlitShaderID;
 

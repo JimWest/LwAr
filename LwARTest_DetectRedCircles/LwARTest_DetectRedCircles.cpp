@@ -75,7 +75,7 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 			cube.transform.translation = point;
 
 			// set the scale to the radius so it fits the whole circle
-			cube.transform.scale = glm::vec3(1.0f) *  window.screenToWorldRadius(radius);
+			cube.transform.scale = glm::vec3(1.0f) *  window.screenToWorldDistance(radius);
 
 			// set everything to the same rotation
 			cube.transform.rotation = scene.objects[0].transform.rotation;
@@ -109,7 +109,7 @@ void onUpdate(lwar::Window& window)
 	cubesOnCircles(window, scene, camFrame);
 
 	// set the background of the window to the current camera image
-	window.background.material.texture = camFrame;
+	window.setBackground(camFrame);
 
 	// check for keys
 	int key = window.getLastKey();
