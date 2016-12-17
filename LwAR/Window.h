@@ -35,6 +35,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Scene.h"
+#include "vec3.hpp"
 
 namespace lwar
 {

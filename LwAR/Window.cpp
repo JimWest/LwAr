@@ -37,7 +37,7 @@ namespace lwar
 		// size of the frostum at the distance of the background	
 		float frustumHeight = worldCameraDist * tan(glm::radians(fov * 0.5f));
 		float frustumWidth = frustumHeight * aspectRatio;
-		
+
 		// scale it
 		background.transform.scale = glm::vec3(frustumWidth, frustumHeight, 1.0f);
 
@@ -45,6 +45,8 @@ namespace lwar
 		viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, worldCameraDist),
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		renderer->light.transform.translation = glm::vec3(3, 3, -3);
 	}
 
 

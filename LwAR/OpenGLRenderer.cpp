@@ -301,8 +301,28 @@ namespace lwar
 
 		// set the light position in the shader
 		GLuint lightID = glGetUniformLocation(standardShaderID, "LightPosition_worldspace");
-		glm::vec3 lightPos = glm::vec3(4, 4, 4);
-		glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
+		//glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		glUniform3f(lightID, light.transform.translation.x, light.transform.translation.y, light.transform.translation.z);
+
+
+		if ((err = glGetError()) != GL_NO_ERROR) {
+			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+		}
+
+		// set the light position in the shader
+		GLuint lightStrength = glGetUniformLocation(standardShaderID, "lightStrength");
+		//glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		glUniform1f(lightStrength, light.strength);
+
+		if ((err = glGetError()) != GL_NO_ERROR) {
+			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+		}
+
+		// set the light position in the shader
+		GLuint lightColor = glGetUniformLocation(standardShaderID, "lightColor");
+		//glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		glUniform3f(lightColor, light.color.x, light.color.y, light.color.z);
+
 
 		if ((err = glGetError()) != GL_NO_ERROR) {
 			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;

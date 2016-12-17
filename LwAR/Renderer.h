@@ -3,7 +3,7 @@
 #include <functional>
 #include "Object3d.h"
 #include "opencv2/opencv.hpp"
-
+#include "Light.h"
 
 namespace lwar
 {
@@ -20,5 +20,6 @@ namespace lwar
 		virtual int getWindowWidth() = 0;
 		virtual int getWindowHeight() = 0;
 		std::function<void(int key)> onKeyboardInput;
+		Light light;
 	};
 }
