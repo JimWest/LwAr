@@ -9,7 +9,7 @@ namespace lwar
 		initGL();
 	}
 
-	OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle, float fov, float zNear , float zFar, float worldCameraDist)
+	OpenGLRenderer::OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle, float fov, float zNear, float zFar, float worldCameraDist)
 	{
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
@@ -118,8 +118,9 @@ namespace lwar
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set our clear colour to black
 
-		standardShaderID = loadShaders("shaders/StandardShader.vert", "shaders/StandardShader.frag");
-		unlitShaderID = loadShaders("shaders/UnlitShader.vert", "shaders/UnlitShader.frag");
+		//standardShaderID = loadShaders("shaders/StandardShader.vert", "shaders/StandardShader.frag");
+		//unlitShaderID = loadShaders("shaders/UnlitShader.vert", "shaders/UnlitShader.frag");
+		standardShaderID = loadShaders2(standardShaderVert, standardShaderFrag);
 
 		if ((err = glGetError()) != GL_NO_ERROR) {
 			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
@@ -127,13 +128,13 @@ namespace lwar
 
 		//initText2D("Holstein.png");
 		initText2D("calibri.bmp");
-		
+
 	}
 
 	void OpenGLRenderer::initText2D(const char * texturePath) {
 
 		// Initialize texture
-		cv::Mat font = cv::imread(texturePath);	
+		cv::Mat font = cv::imread(texturePath);
 		// don't know why but the font don't needs to be flipped, so flip it here so its the wright way later
 		//cv::Mat flippedFont;
 		//cv::flip(font, flippedFont, 0);
@@ -144,7 +145,7 @@ namespace lwar
 		glGenBuffers(1, &Text2DUVBufferID);
 
 		// Initialize Shader
-		Text2DShaderID = loadShaders("shaders/TextVertexShader.vertexshader", "shaders/TextVertexShader.fragmentshader");
+		Text2DShaderID = loadShaders2(textShaderVert, textShaderFrag);
 
 		// Initialize uniforms' IDs
 		Text2DUniformID = glGetUniformLocation(Text2DShaderID, "myTextureSampler");
@@ -181,7 +182,7 @@ namespace lwar
 
 	}
 
-	
+
 	void OpenGLRenderer::drawText(const char * text, int x, int y, int size) {
 
 		unsigned int length = strlen(text);
@@ -216,7 +217,7 @@ namespace lwar
 			UVs.push_back(uv_down_left);
 			UVs.push_back(uv_down_right);
 			UVs.push_back(uv_down_right);
-			UVs.push_back(uv_up_right);			
+			UVs.push_back(uv_up_right);
 			UVs.push_back(uv_up_left);
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, Text2DVertexBufferID);
@@ -259,29 +260,10 @@ namespace lwar
 	}
 
 
-	void OpenGLRenderer::drawObject(Object3d& object, bool ignoreDepth)
+	void OpenGLRenderer::drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth)
 	{
-		GLuint shaderId;
-
-		switch (object.material.shaderType)
-		{
-		case ShaderType::Standard:
-			shaderId = standardShaderID;
-			break;
-		case ShaderType::Unlit:
-		default:
-			shaderId = unlitShaderID;
-			break;
-		}
-
 		// Use our shader
-		glUseProgram(shaderId);
-
-		// Camera matrix
-		glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, zNear, zFar);
-		glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, worldCameraDist),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
+		glUseProgram(standardShaderID);
 
 		// modell matrix
 		glm::mat4 identyMatrix = glm::mat4(1.0f);
@@ -293,9 +275,9 @@ namespace lwar
 		glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 
 		// set the matrix paremters on the shader
-		GLuint matrixID = glGetUniformLocation(shaderId, "MVP");
-		GLuint viewMatrixID = glGetUniformLocation(shaderId, "V");
-		GLuint modelMatrixID = glGetUniformLocation(shaderId, "M");
+		GLuint matrixID = glGetUniformLocation(standardShaderID, "MVP");
+		GLuint viewMatrixID = glGetUniformLocation(standardShaderID, "V");
+		GLuint modelMatrixID = glGetUniformLocation(standardShaderID, "M");
 		glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 		glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
 		glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]);
@@ -306,8 +288,12 @@ namespace lwar
 			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
 		}
 
+		// set if the object is unlit or not
+		GLuint unlitId = glGetUniformLocation(standardShaderID, "unlit");
+		glUniform1i(unlitId, int(object.material.shaderType == ShaderType::Unlit));
+
 		// set the light position in the shader
-		GLuint lightID = glGetUniformLocation(shaderId, "LightPosition_worldspace");
+		GLuint lightID = glGetUniformLocation(standardShaderID, "LightPosition_worldspace");
 		glm::vec3 lightPos = glm::vec3(4, 4, 4);
 		glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
 
@@ -321,7 +307,7 @@ namespace lwar
 		// Draw the textures
 		// Note: Window co-ordinates origin is top left, texture co-ordinate origin is bottom left.	
 
-		GLint texLocation = glGetUniformLocation(shaderId, "myTextureSampler");
+		GLint texLocation = glGetUniformLocation(standardShaderID, "myTextureSampler");
 		glUniform1i(texLocation, 0);
 
 		if ((err = glGetError()) != GL_NO_ERROR) {
@@ -460,6 +446,80 @@ namespace lwar
 		// Compile Fragment Shader
 		printf("Compiling shader : %s\n", fragment_file_path);
 		char const * FragmentSourcePointer = FragmentShaderCode.c_str();
+		glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
+		glCompileShader(FragmentShaderID);
+
+		// Check Fragment Shader
+		glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
+		glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+		if (InfoLogLength > 0) {
+			std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
+			glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+			printf("%s\n", &FragmentShaderErrorMessage[0]);
+		}
+
+
+		// Link the program
+		printf("Linking program\n");
+		GLuint ProgramID = glCreateProgram();
+		glAttachShader(ProgramID, VertexShaderID);
+		glAttachShader(ProgramID, FragmentShaderID);
+		glLinkProgram(ProgramID);
+
+		// Check the program
+		glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
+		glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+		if (InfoLogLength > 0) {
+			std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+			glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+			printf("%s\n", &ProgramErrorMessage[0]);
+		}
+
+		glDetachShader(ProgramID, VertexShaderID);
+		glDetachShader(ProgramID, FragmentShaderID);
+
+		glDeleteShader(VertexShaderID);
+		glDeleteShader(FragmentShaderID);
+
+		return ProgramID;
+	}
+
+	GLuint OpenGLRenderer::loadShaders2(const char * vertexShader, const char * fragmentShader) {
+
+		// Create the shaders
+		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+
+		GLenum err;
+		if ((err = glGetError()) != GL_NO_ERROR) {
+			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+		}
+
+		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+		if ((err = glGetError()) != GL_NO_ERROR) {
+			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
+		}
+
+		GLint Result = GL_FALSE;
+		int InfoLogLength;
+
+		// Compile Vertex Shader
+		printf("Compiling vertex shader\n");
+		char const * VertexSourcePointer = vertexShader;
+		glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
+		glCompileShader(VertexShaderID);
+
+		// Check Vertex Shader
+		glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
+		glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+		if (InfoLogLength > 0) {
+			std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+			glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+			printf("%s\n", &VertexShaderErrorMessage[0]);
+		}
+
+		// Compile Fragment Shader
+		printf("Compiling fragment shader\n");
+		char const * FragmentSourcePointer = fragmentShader;
 		glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
 		glCompileShader(FragmentShaderID);
 

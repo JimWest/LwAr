@@ -37,12 +37,14 @@ namespace lwar
 		// size of the frostum at the distance of the background	
 		float frustumHeight = worldCameraDist * tan(glm::radians(fov * 0.5f));
 		float frustumWidth = frustumHeight * aspectRatio;
-
+		
+		// scale it
 		background.transform.scale = glm::vec3(frustumWidth, frustumHeight, 1.0f);
 
-		// todo: add this as variable??
 		projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, zNear, zFar);
-		viewMatrix = glm::mat3(1.0f);
+		viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, worldCameraDist),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 
@@ -69,7 +71,7 @@ namespace lwar
 
 			// always render background first and ignore depth so other objects cant intercept with it
 			if (background.visible)
-				renderer->drawObject(background, true);
+				renderer->drawObject(background, projectionMatrix, viewMatrix, true);
 
 
 			//_renderer->drawText("Test", 0, 0, 16);
@@ -78,7 +80,7 @@ namespace lwar
 			for (int i = 0; i < scene.objects.size(); i++)
 			{
 				if (scene.objects.at(i).visible)
-					renderer->drawObject(scene.objects.at(i));
+					renderer->drawObject(scene.objects.at(i), projectionMatrix, viewMatrix, false);
 			}
 
 			renderer->postDraw();

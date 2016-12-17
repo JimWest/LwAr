@@ -4,5 +4,6 @@ e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwa
 e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp(55): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp(56): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp(78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   LwARTest_DetectRedCircles.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_DetectRedCircles.exe
   LwARTest_DetectRedCircles.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_DetectRedCircles.pdb (Full PDB)

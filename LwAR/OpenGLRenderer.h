@@ -19,6 +19,7 @@
 #include <gtx/norm.hpp>
 
 #include "Object3d.h"
+#include "OpenGLShader.h"
 
 namespace lwar
 {
@@ -33,8 +34,8 @@ namespace lwar
 
 		void initObject(Object3d& object) override;
 		void preDraw() override;
-		void drawText(const char * text, int x, int y, int size);
-		void drawObject(Object3d& object, bool ignoreDepth = false) override;
+		void drawText(const char* text, int x, int y, int size);
+		void drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth) override;
 		void postDraw() override;
 		int getWindowWidth() override;
 		int getWindowHeight() override;
@@ -66,6 +67,7 @@ namespace lwar
 		void initGL();
 		void initText2D(const char * texturePath);
 		GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
+		GLuint loadShaders2(const char * vertex_file_path, const char * fragment_file_path);
 		static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
 		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void windowSizeCallback(GLFWwindow* window, int width, int height);

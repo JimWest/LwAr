@@ -1,0 +1,4 @@
+- Shader in code
+- Light
+- Text renderer in world space
+- different textshader (color)

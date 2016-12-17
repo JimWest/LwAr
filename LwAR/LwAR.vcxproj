@@ -181,14 +181,6 @@
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\StandardShader.frag" />
-    <None Include="shaders\StandardShader.vert" />
-    <None Include="shaders\TextVertexShader.fragmentshader" />
-    <None Include="shaders\TextVertexShader.vertexshader" />
-    <None Include="shaders\UnlitShader.frag" />
-    <None Include="shaders\UnlitShader.vert" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
