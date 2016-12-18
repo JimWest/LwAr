@@ -9,10 +9,15 @@ namespace lwar
 		Standard
 	};
 
+	enum DrawMode
+	{
+		Points, Lines, Triangles, Quads
+	};
+
 	class Material
 	{
 	public:
-		Material() : Material(ShaderType::Unlit) {}
+		Material() : Material(ShaderType::Standard) {}
 		Material(ShaderType shaderType, cv::Mat texture = cv::Mat());
 		~Material();
 		static cv::Mat GetDefaultTexture();
@@ -20,5 +25,6 @@ namespace lwar
 
 		cv::Mat texture;
 		ShaderType shaderType;
+		DrawMode drawMode = DrawMode::Triangles;
 	};
 }

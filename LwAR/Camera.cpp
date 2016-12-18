@@ -2,16 +2,15 @@
 
 namespace lwar
 {
-	Camera::Camera() :Camera(0, 640, 480, 30)
+	Camera::Camera() :Camera(0, 640, 480)
 	{
 	}
 
-	Camera::Camera(int id, int width, int height, int fps)
+	Camera::Camera(int id, int width, int height)
 	{
 		this->id = id;
 		this->width = width;
 		this->height = height;
-		this->fps = fps;
 	}
 
 	Camera::~Camera()
@@ -31,7 +30,6 @@ namespace lwar
 		{
 			capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
 			capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
-			capture.set(CV_CAP_PROP_FPS, fps);
 		}
 		else
 		{

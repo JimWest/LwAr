@@ -123,7 +123,6 @@ namespace lwar
 	Object3d::Object3d(const char * path)
 	{
 		loadOBJ(path, vertices, uvs, normals);
-		material.shaderType = ShaderType::Standard;
 	}
 
 

@@ -12,7 +12,7 @@ namespace lwar
 	{
 	public:
 		Camera();
-		Camera(int id, int width, int height, int fps);
+		Camera(int id, int width, int height);
 		~Camera();
 
 		void init();
@@ -21,7 +21,7 @@ namespace lwar
 		bool isOpened;
 
 	private:
-		int id, width, height, fps;
+		int id, width, height;
 
 		cv::VideoCapture capture;
 	};

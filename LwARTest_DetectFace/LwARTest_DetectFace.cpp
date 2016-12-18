@@ -75,7 +75,7 @@ int main()
 	lwar::Window window = lwar::Window(width, height, windowName);
 	window.onUpdate = onUpdate;
 
-	lwar::Camera camera = lwar::Camera(0, width, height, 60);
+	lwar::Camera camera = lwar::Camera(0, width, height);
 	camera.init();
 
 	if (!camera.isOpened)

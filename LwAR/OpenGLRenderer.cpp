@@ -373,8 +373,25 @@ namespace lwar
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		}
 
+		GLenum drawMode;
+		switch (object.material.drawMode)
+		{
+		case DrawMode::Lines:
+			drawMode = GL_LINES;
+			break;
+		case DrawMode::Points:
+			drawMode = GL_POINTS;
+			break;
+		case DrawMode::Quads:
+			drawMode = GL_QUADS;
+			break;
+		default:
+			drawMode = GL_TRIANGLES;
+			break;
+		}
+
 		// Draw the object
-		glDrawArrays(GL_TRIANGLES, 0, (object.vertices.size()));
+		glDrawArrays(drawMode, 0, (object.vertices.size()));
 
 		if (ignoreDepth)
 			glEnable(GL_DEPTH_TEST);

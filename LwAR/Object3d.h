@@ -10,7 +10,6 @@ namespace lwar
 		Triangle, Quad, Cube, Sphere, Cylinder
 	};
 
-
 	class Object3d
 	{
 	public:

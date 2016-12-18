@@ -30,6 +30,7 @@ namespace lwar
 		// bind is needed so we can call  member functions
 		renderer->onKeyboardInput = std::bind(&Window::onRendererKeyInput, this, std::placeholders::_1);
 		renderer->initObject(background);
+		background.material.shaderType = ShaderType::Unlit;
 
 		// calculate the needed scale of the background so it fits on the whole screen
 		float aspectRatio = (height) ? float(width) / float(height) : float(height) / float(width);
@@ -46,7 +47,7 @@ namespace lwar
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
-		renderer->light.transform.translation = glm::vec3(3, 3, -3);
+		renderer->light.transform.translation = glm::vec3(3, 3, 3);
 	}
 
 

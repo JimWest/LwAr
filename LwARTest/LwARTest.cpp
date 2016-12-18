@@ -100,24 +100,22 @@ int main()
 	lwar::Window window = lwar::Window(width, height, windowName);
 	window.onUpdate = onUpdate;
 
-	std::cout << "Opening Webcam device ..." << std::endl;
-
-	lwar::Camera camera = lwar::Camera(0, width, height, 60);
+	lwar::Camera camera = lwar::Camera(0, width, height);
 	camera.init();
 
 	if (!camera.isOpened)
 	{
-		std::cout << "Error openeing camera" << std::endl;
-		//return -1;
+		return -1;
 	}
 
 	window.getScene().camera = camera;
 
-	//lwar::Object3d cube = lwar::Object3d("cube.obj");
-	lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
-	cube.transform.scale = glm::vec3(0.2f, 0.2f, 0.2f);
+	lwar::Object3d cube = lwar::Object3d("monkey.obj");
+	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
+	cube.transform.scale = glm::vec3(0.7f, 0.7f, 0.7f);
 	cube.transform.rotation = glm::quat(glm::vec3(0, 45, 45));
-	cube.material.texture = lwar::Material::ColorGradient();
+	cube.material.texture = cv::Scalar(112, 25, 25);
+	cube.material.drawMode = lwar::DrawMode::Lines;
 	
 	window.addObject(cube);
 
