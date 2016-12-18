@@ -70,8 +70,10 @@ void boundingBoxEllipse(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFr
 
 
 
-void onUpdate(lwar::Window& window)
+void onUpdate(lwar::Window& window, float deltaTime)
 {
+	std::cout << deltaTime << std::endl;
+
 	lwar::Renderer* renderer = window.getRenderer();
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;

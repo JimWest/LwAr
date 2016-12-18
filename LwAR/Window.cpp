@@ -65,10 +65,19 @@ namespace lwar
 	// only returns if the application should be closed
 	void Window::start()
 	{
+		std::chrono::time_point<std::chrono::system_clock> start, end;
+		std::chrono::duration<float> deltaTime;		
+		start = std::chrono::system_clock::now();
+
 		while (running)
 		{
+			// calculate the delta time (usable for processor indipendent speed of animations etc.)
+			end = start;
+			start = std::chrono::system_clock::now();			
+			deltaTime = start - end;
+
 			if (onUpdate)
-				onUpdate(*this);
+				onUpdate(*this, deltaTime.count());
 
 			renderer->preDraw();
 

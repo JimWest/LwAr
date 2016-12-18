@@ -29,6 +29,9 @@
 #include <functional>
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <ctime>
+
 #include "gtc/matrix_transform.hpp"
 
 #include "OpenGLRenderer.h"
@@ -49,7 +52,7 @@ namespace lwar
 	{
 
 	public:
-		std::function<void(lwar::Window& window)> onUpdate;
+		std::function<void(lwar::Window& window, float deltaTime)> onUpdate;
 
 		Window();
 		Window(int width, int height, std::string title, RenderType renderType = RenderType::OpenGL);
@@ -80,6 +83,7 @@ namespace lwar
 		float worldCameraDist = 3.0f;
 		bool running = false;
 		int lastKey = 0;
+
 		Renderer* renderer;
 		Scene scene;
 		glm::mat4 projectionMatrix;
