@@ -62,18 +62,23 @@ namespace lwar
 		scene.objects.push_back(object);
 	}
 
+	void Window::addText(Text& text)
+	{
+		scene.texts.push_back(text);
+	}
+
 	// only returns if the application should be closed
 	void Window::start()
 	{
 		std::chrono::time_point<std::chrono::system_clock> start, end;
-		std::chrono::duration<float> deltaTime;		
+		std::chrono::duration<float> deltaTime;
 		start = std::chrono::system_clock::now();
 
 		while (running)
 		{
 			// calculate the delta time (usable for processor indipendent speed of animations etc.)
 			end = start;
-			start = std::chrono::system_clock::now();			
+			start = std::chrono::system_clock::now();
 			deltaTime = start - end;
 
 			if (onUpdate)
@@ -85,14 +90,15 @@ namespace lwar
 			if (background.visible)
 				renderer->drawObject(background, projectionMatrix, viewMatrix, true);
 
-
-			//_renderer->drawText("Test", 0, 0, 16);
-			renderer->drawText("!ABCDEFGHAJKLMOPQRSTUVWXYZ", 10, 500, 30);
-
 			for (int i = 0; i < scene.objects.size(); i++)
 			{
 				if (scene.objects.at(i).visible)
 					renderer->drawObject(scene.objects.at(i), projectionMatrix, viewMatrix, false);
+			}
+
+			for (int i = 0; i < scene.texts.size(); i++)
+			{
+				renderer->drawText(scene.texts.at(i));				
 			}
 
 			renderer->postDraw();

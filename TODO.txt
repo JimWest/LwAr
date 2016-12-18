@@ -1,3 +1,4 @@
+- Libs into property
 - Text renderer in world space
 - different textshader (color)
 - ausarbeitung:

@@ -162,6 +162,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="Marker.h" />
     <ClInclude Include="Material.h" />

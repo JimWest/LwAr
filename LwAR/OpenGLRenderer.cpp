@@ -187,19 +187,19 @@ namespace lwar
 	}
 
 
-	void OpenGLRenderer::drawText(const char * text, int x, int y, int size) {
-
-		unsigned int length = strlen(text);
+	void OpenGLRenderer::drawText(Text& text)
+	{
+		unsigned int length = strlen(text.text);
 
 		// Fill buffers
 		std::vector<glm::vec2> vertices;
 		std::vector<glm::vec2> UVs;
 		for (unsigned int i = 0; i < length; i++) {
 
-			glm::vec2 vertex_up_left = glm::vec2(x + i*size, y + size);
-			glm::vec2 vertex_up_right = glm::vec2(x + i*size + size, y + size);
-			glm::vec2 vertex_down_right = glm::vec2(x + i*size + size, y);
-			glm::vec2 vertex_down_left = glm::vec2(x + i*size, y);
+			glm::vec2 vertex_up_left = glm::vec2(text.x + i * text.size, text.y + text.size);
+			glm::vec2 vertex_up_right = glm::vec2(text.x + i * text.size + text.size, text.y + text.size);
+			glm::vec2 vertex_down_right = glm::vec2(text.x + i * text.size + text.size, text.y);
+			glm::vec2 vertex_down_left = glm::vec2(text.x + i * text.size, text.y);
 
 			vertices.push_back(vertex_up_left);
 			vertices.push_back(vertex_down_left);
@@ -209,7 +209,7 @@ namespace lwar
 			vertices.push_back(vertex_up_right);
 			vertices.push_back(vertex_up_left);
 
-			char character = text[i];
+			char character = text.text[i];
 			float uv_x = (character % 16) / 16.0f;
 			float uv_y = (character / 16) / 16.0f;
 

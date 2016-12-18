@@ -38,6 +38,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Scene.h"
+#include "Text.h"
 #include "vec3.hpp"
 
 namespace lwar
@@ -58,6 +59,7 @@ namespace lwar
 		Window(int width, int height, std::string title, RenderType renderType = RenderType::OpenGL);
 		~Window();
 		void addObject(Object3d &object);
+		void addText(Text& text);
 		void start();
 		void stop();
 

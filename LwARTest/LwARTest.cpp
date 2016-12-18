@@ -72,8 +72,6 @@ void boundingBoxEllipse(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFr
 
 void onUpdate(lwar::Window& window, float deltaTime)
 {
-	std::cout << deltaTime << std::endl;
-
 	lwar::Renderer* renderer = window.getRenderer();
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
@@ -118,8 +116,12 @@ int main()
 	cube.transform.rotation = glm::quat(glm::vec3(0, 45, 45));
 	cube.material.texture = cv::Scalar(112, 25, 25);
 	cube.material.drawMode = lwar::DrawMode::Lines;
-	
+
 	window.addObject(cube);
+
+	window.addText(lwar::Text("!ABCDEFGHAJKLMOPQRSTUVWXYZ", 10, 500, 30));
+
+	//_renderer->drawText("Test", 0, 0, 16);
 
 	// starts the main loop
 	window.start();

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Camera.h"
 #include "Object3d.h"
+#include "Text.h"
 #include "glm.hpp"
 
 namespace lwar
@@ -11,6 +12,7 @@ namespace lwar
 	{
 		Camera camera;
 		std::vector<Object3d> objects;
+		std::vector<Text> texts;
 
 		void hideAllObjects()
 		{

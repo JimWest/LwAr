@@ -19,6 +19,7 @@
 #include <gtx/norm.hpp>
 
 #include "Object3d.h"
+#include "Text.h"
 #include "OpenGLShader.h"
 
 namespace lwar
@@ -34,7 +35,7 @@ namespace lwar
 
 		void initObject(Object3d& object) override;
 		void preDraw() override;
-		void drawText(const char* text, int x, int y, int size);
+		void drawText(Text& text);
 		void drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth) override;
 		void postDraw() override;
 		int getWindowWidth() override;
