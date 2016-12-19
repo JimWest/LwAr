@@ -1,11 +1,8 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppClean.targets(76,5): warning : The process cannot access the file 'e:\hska\master\1. semester\projektarbeit\code\lwar\build\debug\lwartest_detectface.pdb' because it is being used by another process.
-  stdafx.cpp
-  LwARTest_DetectFace.cpp
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\scene.h(17): warning C4018: '<': signed/unsigned mismatch
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectface\lwartest_detectface.cpp(41): warning C4018: '<': signed/unsigned mismatch
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectface\lwartest_detectface.cpp(43): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectface\lwartest_detectface.cpp(44): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  LwARTest_DetectFace.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_DetectFace.exe
-  LwARTest_DetectFace.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_DetectFace.pdb (Full PDB)
+﻿  LwARTest_DetectFace.cpp
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwar\scene.h(19): warning C4018: '<': signed/unsigned mismatch
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectface\lwartest_detectface.cpp(59): warning C4018: '<': signed/unsigned mismatch
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectface\lwartest_detectface.cpp(61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectface\lwartest_detectface.cpp(64): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectface\lwartest_detectface.cpp(76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  LwARTest_DetectFace.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\Build\Debug\LwARTest_DetectFace.exe
+  LwARTest_DetectFace.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\Build\Debug\LwARTest_DetectFace.pdb (Full PDB)
