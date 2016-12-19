@@ -113,7 +113,7 @@ int main()
 	lwar::Object3d cube = lwar::Object3d("monkey.obj");
 	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
 	cube.transform.scale = glm::vec3(0.7f, 0.7f, 0.7f);
-	cube.transform.rotation = glm::quat(glm::vec3(0, 0, 0));
+	cube.transform.rotation = glm::quat(glm::vec3(0, 20, 20));
 	cube.material.texture = cv::Scalar(112, 25, 25);
 	cube.material.drawMode = lwar::DrawMode::Triangles;
 
