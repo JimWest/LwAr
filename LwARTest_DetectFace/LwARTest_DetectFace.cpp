@@ -13,70 +13,67 @@ int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
 
-float faceScale = 1.6f;
-int faceMinNeightbors = 2;
-cv::Size size = cv::Size(50, 50);
-
 cv::CascadeClassifier faceCascade;
-cv::CascadeClassifier eyeCascade;
+cv::Point oldCenter;
+int oldRadius;
+int framesWithoutFace = 0;
 
-std::vector<cv::Rect> getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
+void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float deltaTime)
 {
 	cv::Mat gray;
 	cv::cvtColor(camFrame, gray, cv::COLOR_RGB2GRAY);
 	cv::equalizeHist(gray, gray);
 
 	std::vector<cv::Rect> faces;
+	bool faceFound = false;
+
+	cv::Point center;
+	int radius = 0;
 
 	// Detect faces
-	faceCascade.detectMultiScale(gray, faces, faceScale, faceMinNeightbors, 0 | cv::CASCADE_SCALE_IMAGE, size);
+	faceCascade.detectMultiScale(gray, faces, 1.4f, 1, 0 | CV_HAAR_FIND_BIGGEST_OBJECT, cv::Size(80, 80));
 
-	for (int i = 0; i < faces.size(); ++i)
+	if (faces.size() > 0)
 	{
-		cv::Mat faceROI = cv::Mat(gray, faces[i]);
+		// show the face only in a separate window
+		//cv::Mat faceROI = cv::Mat(gray, faces[0]);
 		//cv::imshow("Detected Face", faceROI);
 
-		std::vector<cv::Rect> eyes;
-		cv::Point eyeCenterDelta;
+		center = cv::Point(faces[0].x + faces[0].width*0.5, faces[0].y + faces[0].height*0.5);
+		radius = cvRound((faces[0].width + faces[0].height)*0.25);
 
-		eyeCascade.detectMultiScale(faceROI, eyes, 1.2, faceMinNeightbors, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20));
+		faceFound = true;
+	}
+	// only lose the face if it wasnt detected for 10 frames;
+	else if (radius > 0 && framesWithoutFace <= 10)
+	{
+		center = oldCenter;
+		radius = oldRadius;
+		faceFound = true;
+		framesWithoutFace++;
+	}
+	else
+	{
+		radius = 0;
+		framesWithoutFace = 0;
+	}
 
-		cv::Point center(faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5);
-		int radius = cvRound((faces[i].width + faces[i].height)*0.25);
-
-		if (eyes.size() > 0)
-		{
-
-			//cv::Mat eyeROI = cv::Mat(gray, eyes[j]);
-			//cv::imshow("Detected Eyes", eyeROI);
-
-			cv::Point eyeCenter(faces[i].x + eyes[0].x + eyes[0].width*0.5, faces[i].y + eyes[0].y + eyes[0].height*0.5);
-			//int eyeRadius = cvRound((eyes[j].width + eyes[j].height)*0.25);
-
-			eyeCenterDelta = center - eyeCenter;
-			cv::ellipse(camFrame, eyeCenter, cv::Size(eyes[0].width * 0.25, eyes[0].height * 0.25), 0, 0, 360, cv::Scalar(255, 0, 255), 4, 8, 0);
-		}
-
-		// 0 rotation = looking forward 
-		cv::Point eyeForward = cv::Point(40, 30);
-
-		cv::ellipse(camFrame, center, cv::Size(faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, cv::Scalar(255, 0, 255), 4, 8, 0);
+	if (faceFound)
+	{
+		// draw an ellipse for debugging
+		//cv::ellipse(camFrame, center, cv::Size(faces[0].width*0.5, faces[0].height*0.5), 0, 0, 360, cv::Scalar(255, 0, 255), 4, 8, 0);
 		glm::vec3 point = window.screenToWorldPoint(glm::vec2(center.x, center.y));
 
 		lwar::Object3d& monkey = scene.objects[0];
 
-		// rotate it accordlingly to the face rotation 
-		monkey.transform.rotation = glm::quat(glm::vec3(glm::radians(-(float)(eyeForward - eyeCenterDelta).y), glm::radians(-(float)(eyeForward - eyeCenterDelta).x), 0));
-
-		// move the object to the position of the circle
-		monkey.transform.translation = point;
+		// move the object to the position of the circle smoothly
+		monkey.transform.translation = glm::mix(monkey.transform.translation, point, 10 * deltaTime);
 
 		// set the scale to the radius so it fits the whole circle
-		monkey.transform.scale = glm::vec3(1.5f) *  window.screenToWorldDistance(radius);
-
+		monkey.transform.scale = glm::mix(monkey.transform.scale, glm::vec3(1.5f) *  window.screenToWorldDistance(radius), 2.5f * deltaTime);
+		oldCenter = center;
+		oldRadius = radius;
 	}
-
-	return faces;
 }
 
 void onUpdate(lwar::Window& window, float deltaTime)
@@ -92,7 +89,7 @@ void onUpdate(lwar::Window& window, float deltaTime)
 		cv::flip(camFrame, camFrame, 1);
 	}
 
-	getFace(window, scene, camFrame);
+	getFace(window, scene, camFrame, deltaTime);
 
 	// set the background of the window to the current camera image
 	window.setBackground(camFrame);
@@ -121,12 +118,6 @@ int main()
 
 	if (!loaded)
 		std::cout << "Can't load face cascade file" << std::endl;
-
-	loaded = eyeCascade.load("..\\ExternalLibs\\opencv2\\build\\share\\OpenCV\\haarcascades\\haarcascade_righteye_2splits.xml");
-
-	if (!loaded)
-		std::cout << "Can't load eye cascade file" << std::endl;
-
 
 	window.getScene().camera = camera;
 

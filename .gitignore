@@ -17,3 +17,4 @@
 /ExternalLibs/opencv2/build/x64
 /LwARTest/Debug
 /LwARTest/Release
+/LwARTest_DetectFace/Debug/*.cache
