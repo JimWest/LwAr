@@ -1,1 +1,25 @@
-﻿  LwAR.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\LwAR\Build\x64\Debug\LwAR.lib
+﻿  stdafx.cpp
+  OpenGLRenderer.cpp
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\openglrenderer.cpp(183): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\openglrenderer.cpp(192): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\openglrenderer.cpp(260): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\openglrenderer.cpp(394): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Object3d.cpp
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\object3d.cpp(148): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\object3d.cpp(159): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\object3d.cpp(167): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\object3d.cpp(172): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\object3d.cpp(178): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\object3d.cpp(184): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+  Material.cpp
+  Marker.cpp
+  Window.cpp
+  Camera.cpp
+  Generating Code...
+  LwAR.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\LwAR\Build\x64\Debug\LwAR.lib
