@@ -3,15 +3,15 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)Build\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ExternalLibs\aruco\include;$(SolutionDir)LwAr\;$(SolutionDir)ExternalLibs\glm;$(SolutionDir)ExternalLibs\openglWrappers\glfw\include;$(SolutionDir)ExternalLibs\openglWrappers\glew\include;$(SolutionDir)ExternalLibs\opencv2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ExternalLibs\aruco\include;$(SolutionDir)LwAr\;$(SolutionDir)ExternalLibs\glm;$(SolutionDir)ExternalLibs\openglWrappers\glfw\include;$(SolutionDir)ExternalLibs\openglWrappers\glew\include;$(SolutionDir)ExternalLibs\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv2\build\x86\vc14\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\lib;$(SolutionDir)ExternalLibs\openglWrappers\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv\x86\vc14\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\x64\lib;$(SolutionDir)ExternalLibs\openglWrappers\glew\x86\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

@@ -114,10 +114,14 @@ int main()
 		return -1;
 	}
 
-	bool loaded = faceCascade.load("..\\ExternalLibs\\opencv2\\build\\share\\OpenCV\\haarcascades\\haarcascade_frontalface_alt.xml");
+	bool loaded = faceCascade.load("..\\ExternalLibs\\opencv\\etc\\haarcascades\\haarcascade_frontalface_alt.xml");
 
 	if (!loaded)
+	{ 		
 		std::cout << "Can't load face cascade file" << std::endl;
+		getchar();
+		return -1;
+	}
 
 	window.getScene().camera = camera;
 

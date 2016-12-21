@@ -1,0 +1,4 @@
+﻿  LwARTest_Marker.cpp
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  LwARTest_Marker.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\Build\x64\Debug\LwARTest_Marker.exe
+  LwARTest_Marker.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\Build\x64\Debug\LwARTest_Marker.pdb (Full PDB)

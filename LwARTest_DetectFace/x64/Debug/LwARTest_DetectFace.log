@@ -1,0 +1,5 @@
+﻿  LwARTest_DetectFace.cpp
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectface\lwartest_detectface.cpp(42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectface\lwartest_detectface.cpp(73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  LwARTest_DetectFace.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\Build\x64\Debug\LwARTest_DetectFace.exe
+  LwARTest_DetectFace.vcxproj -> D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\Build\x64\Debug\LwARTest_DetectFace.pdb (Full PDB)

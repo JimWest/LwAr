@@ -2,18 +2,23 @@
 
 // Add all needed librarys
 #ifdef _DEBUG 
+/*
 #pragma comment(lib, "opencv_calib3d2413d.lib")
 #pragma comment(lib, "opencv_core2413d.lib")
 #pragma comment(lib, "opencv_highgui2413d.lib")
 #pragma comment(lib, "opencv_imgproc2413d.lib")
-#pragma comment(lib, "opencv_objdetect2413d.lib")
+#pragma comment(lib, "opencv_objdetect2413d.lib")*/
+#pragma comment(lib, "opencv_world310d.lib")
+
 
 #else
+/*
 #pragma comment(lib, "opencv_calib3d2413.lib")
 #pragma comment(lib, "opencv_core2413.lib")
 #pragma comment(lib, "opencv_highgui2413.lib")
 #pragma comment(lib, "opencv_imgproc2413.lib")
-#pragma comment(lib, "opencv_objdetect2413.lib")
+#pragma comment(lib, "opencv_objdetect2413.lib")*/
+#pragma comment(lib, "opencv_world310d.lib")
 #endif
 
 #pragma comment(lib, "opengl32.lib")
@@ -31,8 +36,6 @@
 #include <memory>
 #include <chrono>
 #include <ctime>
-
-#include "gtc/matrix_transform.hpp"
 
 #include "OpenGLRenderer.h"
 #include "Camera.h"

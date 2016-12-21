@@ -18,3 +18,4 @@
 /LwARTest/Debug
 /LwARTest/Release
 /LwARTest_DetectFace/Debug/*.cache
+/ExternalLibs/opencv2_old
