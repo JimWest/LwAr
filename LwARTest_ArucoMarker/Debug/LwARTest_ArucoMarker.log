@@ -1,7 +1,0 @@
-﻿  stdafx.cpp
-  LwARTest_ArucoMarker.cpp
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\scene.h(19): warning C4018: '<': signed/unsigned mismatch
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_arucomarker\lwartest_arucomarker.cpp(94): warning C4018: '<': signed/unsigned mismatch
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  LwARTest_ArucoMarker.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_ArucoMarker.exe
-  LwARTest_ArucoMarker.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_ArucoMarker.pdb (Full PDB)

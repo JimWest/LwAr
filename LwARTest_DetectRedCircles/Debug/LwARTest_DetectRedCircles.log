@@ -1,5 +1,0 @@
-﻿  stdafx.cpp
-d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectredcircles\stdafx.cpp : fatal error C1041: cannot open program database 'D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\LwARTest_DetectRedCircles\Debug\vc140.idb'; if multiple CL.EXE write to the same .PDB file, please use /FS
-  LwARTest_DetectRedCircles.cpp
-d:\eigene dateien\hska\1. semester\projektarbeit\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp : fatal error C1041: cannot open program database 'D:\Eigene Dateien\HSKA\1. Semester\Projektarbeit\LwAR\LwARTest_DetectRedCircles\Debug\vc140.pdb'; if multiple CL.EXE write to the same .PDB file, please use /FS
-  Generating Code...

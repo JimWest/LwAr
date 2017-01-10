@@ -9,6 +9,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)ExternalLibs\aruco\include;$(SolutionDir)LwAr\;$(SolutionDir)ExternalLibs\glm;$(SolutionDir)ExternalLibs\openglWrappers\glfw\include;$(SolutionDir)ExternalLibs\openglWrappers\glew\include;$(SolutionDir)ExternalLibs\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv\x86\vc14\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\x64\lib;$(SolutionDir)ExternalLibs\openglWrappers\glew\x86\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

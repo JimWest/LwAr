@@ -166,7 +166,6 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="Marker.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Object3d.h" />
     <ClInclude Include="OpenGLRenderer.h" />
@@ -175,16 +174,17 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="Marker.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Object3d.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -94,7 +94,6 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 
 void onUpdate(lwar::Window& window, float deltaTime)
 {
-	lwar::Renderer* renderer = window.getRenderer();
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 

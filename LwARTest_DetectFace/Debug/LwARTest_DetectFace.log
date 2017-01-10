@@ -1,6 +1,0 @@
-﻿  LwARTest_DetectFace.cpp
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwar\scene.h(19): warning C4018: '<': signed/unsigned mismatch
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectface\lwartest_detectface.cpp(42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectface\lwartest_detectface.cpp(73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  LwARTest_DetectFace.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_DetectFace.exe
-  LwARTest_DetectFace.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\Debug\LwARTest_DetectFace.pdb (Full PDB)

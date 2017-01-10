@@ -18,6 +18,49 @@ cv::Point oldCenter;
 int oldRadius;
 int framesWithoutFace = 0;
 
+void onUpdate(lwar::Window& window, float deltaTime);
+
+int main()
+{
+	lwar::Window window = lwar::Window(width, height, windowName);
+	window.onUpdate = onUpdate;
+
+	lwar::Camera camera = lwar::Camera(0, width, height);
+	camera.init();
+
+	if (!camera.isOpened)
+	{
+		return -1;
+	}
+
+	bool loaded = faceCascade.load("..\\..\\..\\ExternalLibs\\opencv\\etc\\haarcascades\\haarcascade_frontalface_alt.xml");
+
+	if (!loaded)
+	{ 		
+		std::cout << "Can't load face cascade file" << std::endl;
+		getchar();
+		return -1;
+	}
+
+	window.getScene().camera = camera;
+
+	lwar::Object3d monkey = lwar::Object3d("monkey.obj");
+	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
+	monkey.transform.scale = glm::vec3(0.7f, 0.7f, 0.7f);
+	monkey.transform.rotation = glm::quat(glm::vec3(0, 0, 0));
+	monkey.material.texture = cv::Scalar(112, 25, 25);
+
+	window.addObject(monkey);
+
+
+	// starts the main loop
+	window.start();
+
+	return 0;
+}
+
+
+
 void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float deltaTime)
 {
 	cv::Mat gray;
@@ -78,7 +121,6 @@ void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float 
 
 void onUpdate(lwar::Window& window, float deltaTime)
 {
-	lwar::Renderer* renderer = window.getRenderer();
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 
@@ -99,43 +141,4 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	// escape == exit
 	if (key == 256)
 		window.stop();
-}
-
-int main()
-{
-	lwar::Window window = lwar::Window(width, height, windowName);
-	window.onUpdate = onUpdate;
-
-	lwar::Camera camera = lwar::Camera(0, width, height);
-	camera.init();
-
-	if (!camera.isOpened)
-	{
-		return -1;
-	}
-
-	bool loaded = faceCascade.load("..\\ExternalLibs\\opencv\\etc\\haarcascades\\haarcascade_frontalface_alt.xml");
-
-	if (!loaded)
-	{ 		
-		std::cout << "Can't load face cascade file" << std::endl;
-		getchar();
-		return -1;
-	}
-
-	window.getScene().camera = camera;
-
-	lwar::Object3d monkey = lwar::Object3d("monkey.obj");
-	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
-	monkey.transform.scale = glm::vec3(0.7f, 0.7f, 0.7f);
-	monkey.transform.rotation = glm::quat(glm::vec3(0, 0, 0));
-	monkey.material.texture = cv::Scalar(112, 25, 25);
-
-	window.addObject(monkey);
-
-
-	// starts the main loop
-	window.start();
-
-	return 0;
 }
