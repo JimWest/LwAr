@@ -48,7 +48,6 @@ int main()
 
 void onUpdate(lwar::Window& window, float deltaTime)
 {
-	lwar::Renderer* renderer = window.getRenderer();
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 

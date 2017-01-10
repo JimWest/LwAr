@@ -45,6 +45,7 @@ std::vector<cv::Vec3f> detectRedCircles(cv::Mat& image)
 
 void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 {
+	// find all red circles in the scene
 	std::vector<cv::Vec3f> circles = detectRedCircles(camFrame);
 
 	// Loop over all detected circles and outline them on the original image
