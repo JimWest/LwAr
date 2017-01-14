@@ -1,9 +1,0 @@
-﻿  LwARTest_DetectRedCircles.cpp
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp(55): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp(56): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-e:\hska\master\1. semester\projektarbeit\code\lwar\lwartest_detectredcircles\lwartest_detectredcircles.cpp(77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  stdafx.cpp
-  LwARTest_DetectRedCircles.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\x64\Debug\LwARTest_DetectRedCircles.exe
-  LwARTest_DetectRedCircles.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\x64\Debug\LwARTest_DetectRedCircles.pdb (Full PDB)

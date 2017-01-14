@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwAR", "LwAR\LwAR.vcxproj", "{ACF5704B-A4B6-4228-AB50-481462865B21}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwAR", "Source\LwAR\LwAR.vcxproj", "{ACF5704B-A4B6-4228-AB50-481462865B21}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest", "LwARTest\LwARTest.vcxproj", "{67ECE6F8-65DD-48DA-8183-678260167632}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest", "Source\LwARTest\LwARTest.vcxproj", "{67ECE6F8-65DD-48DA-8183-678260167632}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest_DetectRedCircles", "LwARTest_DetectRedCircles\LwARTest_DetectRedCircles.vcxproj", "{CE3FB375-4894-4EF9-AB35-9DD61CB529F9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest_DetectRedCircles", "Source\LwARTest_DetectRedCircles\LwARTest_DetectRedCircles.vcxproj", "{CE3FB375-4894-4EF9-AB35-9DD61CB529F9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest_DetectFace", "LwARTest_DetectFace\LwARTest_DetectFace.vcxproj", "{20DDFCB2-F0E2-4037-BCEA-7FF4EC711982}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest_DetectFace", "Source\LwARTest_DetectFace\LwARTest_DetectFace.vcxproj", "{20DDFCB2-F0E2-4037-BCEA-7FF4EC711982}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{A1BF94DB-ED1D-4A07-A946-44F93E3E1C08}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest_Marker", "LwARTest_Marker\LwARTest_Marker.vcxproj", "{7EDEF657-92C8-46C4-8CBB-E40A17AD8B17}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LwARTest_Marker", "Source\LwARTest_Marker\LwARTest_Marker.vcxproj", "{7EDEF657-92C8-46C4-8CBB-E40A17AD8B17}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{E1B8B525-D496-4217-847E-0ADA9A5E2422}"
 EndProject
