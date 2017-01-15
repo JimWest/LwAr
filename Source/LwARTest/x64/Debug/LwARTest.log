@@ -1,3 +1,3 @@
-﻿LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+﻿  LwARTest.cpp
   LwARTest.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\x64\Debug\LwARTest.exe
   LwARTest.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Build\x64\Debug\LwARTest.pdb (Full PDB)

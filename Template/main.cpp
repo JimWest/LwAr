@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "../LwAR/Window.h"
+#include "Window.h"
 #include "glm.hpp"
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -36,6 +36,7 @@ int main()
 
 void onUpdate(lwar::Window& window, float deltaTime)
 {
+	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 
 	if (scene.camera.isOpened)
