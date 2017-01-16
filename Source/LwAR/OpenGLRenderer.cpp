@@ -37,7 +37,7 @@ namespace lwar
 		glfwTerminate();
 	}
 
-
+	// GLFW Callback for pressed keys, saves the key 
 	void OpenGLRenderer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		// callback for pressed keys, glfwGetWindowUserPointer needed cause glfw needs static functions for callbacks
@@ -52,22 +52,25 @@ namespace lwar
 	{
 	}
 
+	// GLFW Callback when the windows was resized, we need to resize the Buffer. It will be just scaled so it fits the screen.
 	void OpenGLRenderer::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 	{
 		glViewport(0, 0, width, height);
 	}
 
+	// Initialises all the OpenGL functions. The needs to be called before any rendering can be done.
 	void OpenGLRenderer::initGL()
 	{
 		// Initialise glfw
 		glfwInit();
 
+		// Set minimum needed OpenGL Version
 		glfwWindowHint(GLFW_SAMPLES, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-		// Create a window
+		// Creates a GLFW window
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
 		glfwMakeContextCurrent(glfwWindow);
 
@@ -122,26 +125,22 @@ namespace lwar
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set our clear colour to black
 
-		//standardShaderID = loadShaders("shaders/StandardShader.vert", "shaders/StandardShader.frag");
-		//unlitShaderID = loadShaders("shaders/UnlitShader.vert", "shaders/UnlitShader.frag");
-		standardShaderID = loadShaders2(standardShaderVert, standardShaderFrag);
+		standardShaderID = loadShaders(standardShaderVert, standardShaderFrag);
 
 		if ((err = glGetError()) != GL_NO_ERROR) {
 			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
 		}
 
-		//initText2D("Holstein.png");
 		initText2D("calibri.bmp");
 
 	}
 
+	// Inits a text, needs to be called before drawing it
 	void OpenGLRenderer::initText2D(const char * texturePath) {
 
 		// Initialize texture
 		cv::Mat font = cv::imread(texturePath);
-		// don't know why but the font don't needs to be flipped, so flip it here so its the wright way later
-		//cv::Mat flippedFont;
-		//cv::flip(font, flippedFont, 0);
+
 		Text2DTextureID = matToTexture(font, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT);
 
 		// Initialize VBO
@@ -149,13 +148,13 @@ namespace lwar
 		glGenBuffers(1, &Text2DUVBufferID);
 
 		// Initialize Shader
-		Text2DShaderID = loadShaders2(textShaderVert, textShaderFrag);
+		Text2DShaderID = loadShaders(textShaderVert, textShaderFrag);
 
 		// Initialize uniforms' IDs
 		Text2DUniformID = glGetUniformLocation(Text2DShaderID, "myTextureSampler");
-		//Text2DUniformID = glGetUniformLocation(unlitShaderID, "myTextureSampler");
 	}
 
+	// Inits an object, needs to be called before drawing it
 	void OpenGLRenderer::initObject(Object3d& object)
 	{
 		glGenVertexArrays(1, &(GLuint)object.vao);
@@ -177,16 +176,15 @@ namespace lwar
 		}
 	}
 
-
+	// Renders the given Text on the scene
 	void OpenGLRenderer::preDraw()
 	{
 		quit = glfwWindowShouldClose(glfwWindow);
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	}
 
-
+	// Renders the given Text on the scene
 	void OpenGLRenderer::drawText(Text& text)
 	{
 		unsigned int length = strlen(text.text);
@@ -266,7 +264,7 @@ namespace lwar
 		glDisableVertexAttribArray(1);
 	}
 
-
+	// Renders the given Object on the scene. Calculates also the end position of the object
 	void OpenGLRenderer::drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth)
 	{
 		// Use our shader
@@ -304,29 +302,15 @@ namespace lwar
 		//glm::vec3 lightPos = glm::vec3(4, 4, 4);
 		glUniform3f(lightID, light.transform.translation.x, light.transform.translation.y, light.transform.translation.z);
 
-
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
 		// set the light position in the shader
 		GLuint lightStrength = glGetUniformLocation(standardShaderID, "lightStrength");
 		//glm::vec3 lightPos = glm::vec3(4, 4, 4);
 		glUniform1f(lightStrength, light.strength);
 
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
 		// set the light position in the shader
 		GLuint lightColor = glGetUniformLocation(standardShaderID, "lightColor");
 		//glm::vec3 lightPos = glm::vec3(4, 4, 4);
 		glUniform3f(lightColor, light.color.x, light.color.y, light.color.z);
-
-
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
 
 		// Convert image and depth data to OpenGL textures
 		//GLuint textureID = matToTexture(camFrame, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP);
@@ -337,18 +321,9 @@ namespace lwar
 		GLint texLocation = glGetUniformLocation(standardShaderID, "myTextureSampler");
 		glUniform1i(texLocation, 0);
 
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		//glUniform1i(textureID, 0);
-
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
 
 		if (ignoreDepth)
 			glDisable(GL_DEPTH_TEST);
@@ -400,11 +375,12 @@ namespace lwar
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
 
-		// Free the texture memory
+		// Frees the texture memory
 		glDeleteTextures(1, &textureID);
 		glDisable(GL_TEXTURE_2D);
 	}
 
+	// Post render operations like Buffer swapping. Needs to be called after the rendering.
 	void OpenGLRenderer::postDraw()
 	{
 		glfwSwapBuffers(glfwWindow);
@@ -417,132 +393,30 @@ namespace lwar
 		}
 	}
 
+	// Returns the Width of the GLFW Window
 	int OpenGLRenderer::getWindowWidth()
 	{
 		return windowWidth;
 	}
 
+	// Returns the Height of the GLFW Window
 	int OpenGLRenderer::getWindowHeight()
 	{
 		return windowHeight;
 	}
 
-	GLuint OpenGLRenderer::loadShaders(const char * vertex_file_path, const char * fragment_file_path) {
-
-		// Create the shaders
-		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-
-		GLenum err;
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
-		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
-
-		// Read the Vertex Shader code from the file
-		std::string VertexShaderCode;
-		std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
-		if (VertexShaderStream.is_open()) {
-			std::string Line = "";
-			while (getline(VertexShaderStream, Line))
-				VertexShaderCode += "\n" + Line;
-			VertexShaderStream.close();
-		}
-		else {
-			printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
-			getchar();
-			return 0;
-		}
-
-		// Read the Fragment Shader code from the file
-		std::string FragmentShaderCode;
-		std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
-		if (FragmentShaderStream.is_open()) {
-			std::string Line = "";
-			while (getline(FragmentShaderStream, Line))
-				FragmentShaderCode += "\n" + Line;
-			FragmentShaderStream.close();
-		}
-
-		GLint Result = GL_FALSE;
-		int InfoLogLength;
-
-
-		// Compile Vertex Shader
-		printf("Compiling shader : %s\n", vertex_file_path);
-		char const * VertexSourcePointer = VertexShaderCode.c_str();
-		glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
-		glCompileShader(VertexShaderID);
-
-		// Check Vertex Shader
-		glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
-		glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-		if (InfoLogLength > 0) {
-			std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
-			glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-			printf("%s\n", &VertexShaderErrorMessage[0]);
-		}
-
-		// Compile Fragment Shader
-		printf("Compiling shader : %s\n", fragment_file_path);
-		char const * FragmentSourcePointer = FragmentShaderCode.c_str();
-		glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
-		glCompileShader(FragmentShaderID);
-
-		// Check Fragment Shader
-		glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
-		glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-		if (InfoLogLength > 0) {
-			std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
-			glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-			printf("%s\n", &FragmentShaderErrorMessage[0]);
-		}
-
-
-		// Link the program
-		printf("Linking program\n");
-		GLuint ProgramID = glCreateProgram();
-		glAttachShader(ProgramID, VertexShaderID);
-		glAttachShader(ProgramID, FragmentShaderID);
-		glLinkProgram(ProgramID);
-
-		// Check the program
-		glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
-		glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-		if (InfoLogLength > 0) {
-			std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
-			glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-			printf("%s\n", &ProgramErrorMessage[0]);
-		}
-
-		glDetachShader(ProgramID, VertexShaderID);
-		glDetachShader(ProgramID, FragmentShaderID);
-
-		glDeleteShader(VertexShaderID);
-		glDeleteShader(FragmentShaderID);
-
-		return ProgramID;
+	bool OpenGLRenderer::getShouldClose()
+	{
+		return quit;
 	}
 
-	GLuint OpenGLRenderer::loadShaders2(const char * vertexShader, const char * fragmentShader) {
+	// Loads the shaders out of the OpenGLShader file as a string into an OpenGL shader which will be later used for rendering.
+	GLuint OpenGLRenderer::loadShaders(const char * vertexShader, const char * fragmentShader) {
 
 		// Create the shaders
 		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-
-		GLenum err;
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
 		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		if ((err = glGetError()) != GL_NO_ERROR) {
-			cerr << "OpenGL error: " << err << ", " << gluErrorString(err) << endl;
-		}
-
+		
 		GLint Result = GL_FALSE;
 		int InfoLogLength;
 
@@ -616,58 +490,10 @@ namespace lwar
 		// Bind to our texture handle
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		//// Catch silly-mistake texture interpolation method for magnification
-		//if (magFilter == GL_LINEAR_MIPMAP_LINEAR ||
-		//	magFilter == GL_LINEAR_MIPMAP_NEAREST ||
-		//	magFilter == GL_NEAREST_MIPMAP_LINEAR ||
-		//	magFilter == GL_NEAREST_MIPMAP_NEAREST)
-		//{
-		//	std::cout << "You can't use MIPMAPs for magnification - setting filter to GL_LINEAR" << std::endl;
-		//	magFilter = GL_LINEAR;
-		//}
-
-		//// Set texture interpolation methods for minification and magnification
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-
-		//// Set texture clamping method
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapFilter);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapFilter);
-
-		// Set incoming texture format to:
-		// GL_BGR       for CV_CAP_OPENNI_BGR_IMAGE,
-		// GL_LUMINANCE for CV_CAP_OPENNI_DISPARITY_MAP,
-		// Work out other mappings as required ( there's a list in comments in main() )
-		//GLenum inputColourFormat = GL_BGR;
-		//if (mat.channels() == 1)
-		//{
-		//	inputColourFormat = GL_LUMINANCE;
-		//}
-
-		//// Create the texture
-		//glTexImage2D(GL_TEXTURE_2D,     // Type of texture
-		//	0,                 // Pyramid level (for mip-mapping) - 0 is the top level
-		//	GL_RGB,            // Internal colour format to convert to
-		//	mat.cols,          // Image width  i.e. 640 for Kinect in standard mode
-		//	mat.rows,          // Image height i.e. 480 for Kinect in standard mode
-		//	0,                 // Border width in pixels (can either be 1 or 0)
-		//	inputColourFormat, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
-		//	GL_UNSIGNED_BYTE,  // Image data type
-		//	flippedMat.ptr());        // The actual image data itself
-
-							   // If we're using mipmaps then generate them. Note: This requires OpenGL 3.0 or higher
-		//if (minFilter == GL_LINEAR_MIPMAP_LINEAR ||
-		//	minFilter == GL_LINEAR_MIPMAP_NEAREST ||
-		//	minFilter == GL_NEAREST_MIPMAP_LINEAR ||
-		//	minFilter == GL_NEAREST_MIPMAP_NEAREST)
-		//{
-		//	glGenerateMipmap(GL_TEXTURE_2D);
-		//}
-
+		
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mat.cols, mat.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, flippedMat.ptr());
 
-		// ... nice trilinear filtering.
+		// texture filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

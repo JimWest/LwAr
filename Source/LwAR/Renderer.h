@@ -20,6 +20,7 @@ namespace lwar
 		virtual void postDraw() {};
 		virtual int getWindowWidth() = 0;
 		virtual int getWindowHeight() = 0;
+		virtual bool getShouldClose() = 0;
 		std::function<void(int key)> onKeyboardInput;
 		Light light;
 	};

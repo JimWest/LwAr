@@ -42,7 +42,8 @@
 #include "Object3d.h"
 #include "Scene.h"
 #include "Text.h"
-#include "vec3.hpp"
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 
 namespace lwar
 {

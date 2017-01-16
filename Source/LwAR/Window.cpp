@@ -1,16 +1,11 @@
-// LwAR.cpp : Defines the entry point for the console application.
-//
-
 #include  "Window.h"
 
 using namespace std;
 
-// TODO: Auto copy needed dlls into the output folder
-
-
 namespace lwar
 {
-
+	 
+	//Creates a new Window which can be used for 3d augmented reality.	
 	Window::Window()
 	{
 		running = false;
@@ -56,46 +51,54 @@ namespace lwar
 		delete(renderer);
 	}
 
+	// Addes a new Object3d to the window which will be rendered each frame. 
+	// This needs to be called so it can be prepared for rendering.
 	void Window::addObject(Object3d& object)
 	{
 		renderer->initObject(object);
 		scene.objects.push_back(object);
 	}
 
+	// Addes a text to the Window which will be rendered each frame. 
 	void Window::addText(Text& text)
 	{
 		scene.texts.push_back(text);
 	}
 
-	// only returns if the application should be closed
+	// Starts the mainloop of the Window, only returns if the window was closed
 	void Window::start()
 	{
+
+		// prepare the variables for the delta time calculation
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		std::chrono::duration<float> deltaTime;
 		start = std::chrono::system_clock::now();
 
-		while (running)
+		while (running && !renderer->getShouldClose())
 		{
 			// calculate the delta time (usable for processor indipendent speed of animations etc.)
 			end = start;
 			start = std::chrono::system_clock::now();
 			deltaTime = start - end;
 
+			// optional callback to control the update
 			if (onUpdate)
 				onUpdate(*this, deltaTime.count());
 
 			renderer->preDraw();
 
-			// always render background first and ignore depth so other objects cant intercept with it
+			// always render background first and ignore depth so it will be always behind all other objects
 			if (background.visible)
 				renderer->drawObject(background, projectionMatrix, viewMatrix, true);
 
+			// render each Object out of the object list
 			for (int i = 0; i < scene.objects.size(); i++)
 			{
 				if (scene.objects.at(i).visible)
 					renderer->drawObject(scene.objects.at(i), projectionMatrix, viewMatrix, false);
 			}
 
+			// render each Text out of the object list
 			for (int i = 0; i < scene.texts.size(); i++)
 			{
 				renderer->drawText(scene.texts.at(i));				
@@ -111,12 +114,13 @@ namespace lwar
 		running = false;
 	}
 
+	// Callback from the renderer. Saves the last pressed key into the lastKey string.
+	// Returns -1, if no Key was pressed
 	void Window::onRendererKeyInput(int key)
 	{
 		std::cout << std::to_string(key) << std::endl;
 		lastKey = key;
 	}
-
 
 	Renderer* Window::getRenderer() const
 	{
@@ -128,41 +132,60 @@ namespace lwar
 		return scene;
 	}
 
+	// Returns the last pressed key from the window
 	int Window::getLastKey()
 	{
 		return lastKey;
 	}
 
+	// Returns the current background of the window
 	cv::Mat Window::getBackground()
 	{
 		return background.material.texture;
 	}
 
+	// Sets the current background of the window
 	void Window::setBackground(cv::Mat background)
 	{
 		this->background.material.texture = background;
 	}
 
+	// Returns the 2D Point of the screen of the given position 3D Position in the Scene	
+	// Adapted from http://webglfactory.blogspot.de/2011/05/how-to-convert-world-to-screen.html
 	glm::vec2 Window::worldToScreenPoint(glm::vec3 position)
 	{
-		return glm::vec2();
+		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+		//transform world to clipping coordinates
+		glm::mat4 translate = glm::translate(viewProjectionMatrix, position);
+		glm::vec4 transformedVector = translate * glm::vec4(1,1,1,1);
+		
+		int winX = (int)round(((transformedVector.x + 1) / 2.0) *
+			width);
+		//we calculate -point3D.getY() because the screen Y axis is
+		//oriented top->down 
+		int winY = (int)round(((1 - transformedVector.y) / 2.0) *
+			height);
+		return glm::vec2(winX, winY);
 	}
 
+	// Returns the 3D Coordinates of the Object in the scene of the given 2D Point of the screen
+	// Adapted from http://webglfactory.blogspot.de/2011/05/how-to-convert-world-to-screen.html
 	glm::vec3 Window::screenToWorldPoint(glm::vec2 position)
 	{
 		double x = 2.0 * position.x / width - 1;
 		double y = -2.0 * position.y / height + 1;
+
 		glm::mat4 viewProjectionInverse =
 			glm::inverse(projectionMatrix *	viewMatrix);
 
 		glm::vec4 point3D = glm::vec4(x, y, 0, 1);
 		point3D = viewProjectionInverse * point3D;
-		return  glm::vec3(point3D.x, point3D.y, 0) * worldCameraDist;
+		return glm::vec3(point3D.x, point3D.y, 0) * worldCameraDist;
 	}
 
-	float Window::screenToWorldDistance(float radius)
+	float Window::screenToWorldDistance(float distance)
 	{
-		return radius / (height / 2.0f);
+		return distance / (height / 2.0f);
 	}
 
 	float Window::worldToScreenDistance(float radius)

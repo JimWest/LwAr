@@ -40,9 +40,7 @@ namespace lwar
 		void postDraw() override;
 		int getWindowWidth() override;
 		int getWindowHeight() override;
-
-		//std::function<void(lwar::Renderer* renderer, int key, int scancode, int action, int mods)> onKeyboardInput;
-		bool quit = false;
+		bool getShouldClose();
 
 	private:
 
@@ -64,11 +62,11 @@ namespace lwar
 		unsigned int Text2DUVBufferID;
 		unsigned int Text2DShaderID;
 		unsigned int Text2DUniformID;
+		bool quit = false;
 
 		void initGL();
 		void initText2D(const char * texturePath);
 		GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
-		GLuint loadShaders2(const char * vertex_file_path, const char * fragment_file_path);
 		static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
 		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void windowSizeCallback(GLFWwindow* window, int width, int height);
