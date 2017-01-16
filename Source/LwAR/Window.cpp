@@ -5,7 +5,6 @@ using namespace std;
 namespace lwar
 {
 	 
-	//Creates a new Window which can be used for 3d augmented reality.	
 	Window::Window()
 	{
 		running = false;
@@ -51,21 +50,17 @@ namespace lwar
 		delete(renderer);
 	}
 
-	// Addes a new Object3d to the window which will be rendered each frame. 
-	// This needs to be called so it can be prepared for rendering.
 	void Window::addObject(Object3d& object)
 	{
 		renderer->initObject(object);
 		scene.objects.push_back(object);
 	}
 
-	// Addes a text to the Window which will be rendered each frame. 
 	void Window::addText(Text& text)
 	{
 		scene.texts.push_back(text);
 	}
-
-	// Starts the mainloop of the Window, only returns if the window was closed
+	
 	void Window::start()
 	{
 
@@ -114,8 +109,6 @@ namespace lwar
 		running = false;
 	}
 
-	// Callback from the renderer. Saves the last pressed key into the lastKey string.
-	// Returns -1, if no Key was pressed
 	void Window::onRendererKeyInput(int key)
 	{
 		std::cout << std::to_string(key) << std::endl;
@@ -132,26 +125,21 @@ namespace lwar
 		return scene;
 	}
 
-	// Returns the last pressed key from the window
 	int Window::getLastKey()
 	{
 		return lastKey;
 	}
 
-	// Returns the current background of the window
 	cv::Mat Window::getBackground()
 	{
 		return background.material.texture;
 	}
 
-	// Sets the current background of the window
 	void Window::setBackground(cv::Mat background)
 	{
 		this->background.material.texture = background;
 	}
 
-	// Returns the 2D Point of the screen of the given position 3D Position in the Scene	
-	// Adapted from http://webglfactory.blogspot.de/2011/05/how-to-convert-world-to-screen.html
 	glm::vec2 Window::worldToScreenPoint(glm::vec3 position)
 	{
 		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
@@ -168,8 +156,6 @@ namespace lwar
 		return glm::vec2(winX, winY);
 	}
 
-	// Returns the 3D Coordinates of the Object in the scene of the given 2D Point of the screen
-	// Adapted from http://webglfactory.blogspot.de/2011/05/how-to-convert-world-to-screen.html
 	glm::vec3 Window::screenToWorldPoint(glm::vec2 position)
 	{
 		double x = 2.0 * position.x / width - 1;

@@ -58,7 +58,6 @@ namespace lwar
 		glViewport(0, 0, width, height);
 	}
 
-	// Initialises all the OpenGL functions. The needs to be called before any rendering can be done.
 	void OpenGLRenderer::initGL()
 	{
 		// Initialise glfw
@@ -134,8 +133,7 @@ namespace lwar
 		initText2D("calibri.bmp");
 
 	}
-
-	// Inits a text, needs to be called before drawing it
+		
 	void OpenGLRenderer::initText2D(const char * texturePath) {
 
 		// Initialize texture
@@ -154,7 +152,6 @@ namespace lwar
 		Text2DUniformID = glGetUniformLocation(Text2DShaderID, "myTextureSampler");
 	}
 
-	// Inits an object, needs to be called before drawing it
 	void OpenGLRenderer::initObject(Object3d& object)
 	{
 		glGenVertexArrays(1, &(GLuint)object.vao);
@@ -176,7 +173,6 @@ namespace lwar
 		}
 	}
 
-	// Renders the given Text on the scene
 	void OpenGLRenderer::preDraw()
 	{
 		quit = glfwWindowShouldClose(glfwWindow);
@@ -184,7 +180,6 @@ namespace lwar
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	// Renders the given Text on the scene
 	void OpenGLRenderer::drawText(Text& text)
 	{
 		unsigned int length = strlen(text.text);
@@ -264,7 +259,6 @@ namespace lwar
 		glDisableVertexAttribArray(1);
 	}
 
-	// Renders the given Object on the scene. Calculates also the end position of the object
 	void OpenGLRenderer::drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth)
 	{
 		// Use our shader
@@ -380,7 +374,6 @@ namespace lwar
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	// Post render operations like Buffer swapping. Needs to be called after the rendering.
 	void OpenGLRenderer::postDraw()
 	{
 		glfwSwapBuffers(glfwWindow);
@@ -393,13 +386,11 @@ namespace lwar
 		}
 	}
 
-	// Returns the Width of the GLFW Window
 	int OpenGLRenderer::getWindowWidth()
 	{
 		return windowWidth;
 	}
 
-	// Returns the Height of the GLFW Window
 	int OpenGLRenderer::getWindowHeight()
 	{
 		return windowHeight;
@@ -410,7 +401,6 @@ namespace lwar
 		return quit;
 	}
 
-	// Loads the shaders out of the OpenGLShader file as a string into an OpenGL shader which will be later used for rendering.
 	GLuint OpenGLRenderer::loadShaders(const char * vertexShader, const char * fragmentShader) {
 
 		// Create the shaders
@@ -476,7 +466,6 @@ namespace lwar
 		return ProgramID;
 	}
 
-	// returns the ID of the generated OpenGL Texture
 	GLuint OpenGLRenderer::matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter)
 	{
 		// OpenCV stores image from top to buttom, OpenGL the oppsite so flip it
