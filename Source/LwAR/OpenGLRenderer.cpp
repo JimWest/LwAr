@@ -416,6 +416,11 @@ namespace lwar
 		return windowHeight;
 	}
 
+	void OpenGLRenderer::getWindowPosition(int* xPos, int* yPos)
+	{
+		glfwGetWindowPos(glfwWindow, xPos, yPos);
+	}
+
 	bool OpenGLRenderer::getShouldClose()
 	{
 		return quit;

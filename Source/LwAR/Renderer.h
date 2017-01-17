@@ -43,6 +43,7 @@ namespace lwar
 		virtual void postDraw() {};
 		virtual int getWindowWidth() = 0;
 		virtual int getWindowHeight() = 0;
+		virtual void getWindowPosition(int* xPos, int* yPos) = 0;
 		virtual bool getShouldClose() = 0;
 
 		// Callback for Keyboard Input

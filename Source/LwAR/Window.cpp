@@ -130,6 +130,11 @@ namespace lwar
 		return lastKey;
 	}
 
+	void Window::getWindowPosition(int* xPos, int* yPos)
+	{
+		return renderer->getWindowPosition(xPos, yPos);
+	}
+
 	cv::Mat Window::getBackground()
 	{
 		return background.material.texture;

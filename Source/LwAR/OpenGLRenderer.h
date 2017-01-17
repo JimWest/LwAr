@@ -40,6 +40,7 @@ namespace lwar
 		void postDraw() override;
 		int getWindowWidth() override;
 		int getWindowHeight() override;
+		void getWindowPosition(int* xPos, int* yPos) override;
 		bool getShouldClose();
 
 	private:

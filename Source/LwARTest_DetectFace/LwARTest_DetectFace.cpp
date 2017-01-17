@@ -44,14 +44,12 @@ int main()
 	}
 
 	lwar::Object3d monkey = lwar::Object3d("monkey.obj");
-	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
 	monkey.transform.scale = glm::vec3(0.7f, 0.7f, 0.7f);
 	monkey.transform.rotation = glm::quat(glm::vec3(0, 0, 0));
 	monkey.material.texture = cv::Scalar(112, 25, 25);
 
 	window.addObject(monkey);
-
-
+	
 	// starts the main loop
 	window.start();
 
@@ -105,7 +103,8 @@ void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float 
 		//cv::ellipse(camFrame, center, cv::Size(faces[0].width*0.5, faces[0].height*0.5), 0, 0, 360, cv::Scalar(255, 0, 255), 4, 8, 0);
 		glm::vec3 point = window.screenToWorldPoint(glm::vec2(center.x, center.y));
 
-		lwar::Object3d& monkey = scene.objects[0];
+		// get the reference of the monkey of the scene
+		lwar::Object3d& monkey = scene.objects.at(0);
 
 		// move the object to the position of the circle smoothly
 		monkey.transform.translation = glm::mix(monkey.transform.translation, point, 10 * deltaTime);

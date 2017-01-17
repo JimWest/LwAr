@@ -45,6 +45,12 @@ int main()
 	return 0;
 }
 
+// Shows a new OpenCV Window with the an edge detected image
+void showOpenCVCanny(cv::Mat img)
+{
+
+}
+
 
 void onUpdate(lwar::Window& window, float deltaTime)
 {
@@ -60,6 +66,19 @@ void onUpdate(lwar::Window& window, float deltaTime)
 
 	// set the background of the window to the current camera image
 	window.setBackground(camFrame);
+
+	// show the images with a canny edge operator in a new OpenCV Window
+	cv::Mat gray, edges;
+	cv::cvtColor(camFrame, gray, CV_BGR2GRAY);
+	cv::Canny(gray, edges, 100, 200);
+
+	cv::namedWindow("Edges", 1);
+
+	// move the OpenCV Window right of our window
+	int xpos, ypos;
+	window.getWindowPosition(&xpos, &ypos);
+	cv::moveWindow("Edges", xpos + width + 50, ypos - 30);
+	imshow("Edges", edges);
 
 	// check for keys
 	int key = window.getLastKey();
