@@ -21,6 +21,7 @@ cv::RNG rng(12345);
 
 aruco::MarkerDetector MDetector;
 std::vector<aruco::Marker> Markers;
+lwar::Camera camera;
 
 void onUpdate(lwar::Window& window, float deltaTime);
 
@@ -29,15 +30,13 @@ int main()
 	lwar::Window window = lwar::Window(width, height, windowName);
 	window.onUpdate = onUpdate;
 
-	lwar::Camera camera = lwar::Camera(0, width, height);
+	camera = lwar::Camera(0, width, height);
 	camera.init();
 
 	if (!camera.isOpened)
 	{
 		return -1;
 	}
-
-	window.getScene().camera = camera;
 
 	// starts the main loop
 	window.start();
@@ -51,9 +50,9 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 
-	if (scene.camera.isOpened)
+	if (camera.isOpened)
 	{
-		camFrame = scene.camera.retrieve();
+		camFrame = camera.retrieve();
 		// mirror on y axis so its like a mirror
 		cv::flip(camFrame, camFrame, 1);
 	}

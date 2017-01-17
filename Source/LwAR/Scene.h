@@ -10,7 +10,6 @@ namespace lwar
 {
 	struct Scene
 	{
-		Camera camera;
 		std::vector<Object3d> objects;
 		std::vector<Text> texts;
 

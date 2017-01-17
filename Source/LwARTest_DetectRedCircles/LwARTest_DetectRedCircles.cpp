@@ -11,6 +11,39 @@
 #include <direct.h>
 #include <gtx/euler_angles.hpp>
 
+int width = 640;
+int height = 480;
+std::string windowName = "Augmented Reality Test";
+lwar::Camera camera;
+
+void onUpdate(lwar::Window& window, float deltaTime);
+
+int main()
+{
+	int width = 640;
+	int height = 480;
+	std::string windowName = "Augmented Reality Test";
+
+	lwar::Window window = lwar::Window(width, height, windowName);
+	window.onUpdate = onUpdate;
+	
+	camera = lwar::Camera(0, width, height);
+	camera.init();
+
+	if (!camera.isOpened)
+	{
+		getchar();
+		return -1;
+	}
+
+	// starts the main loop
+	window.start();
+
+	return 0;
+}
+
+
+
 
 std::vector<cv::Vec3f> detectRedCircles(cv::Mat& image)
 {
@@ -92,15 +125,14 @@ void cubesOnCircles(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame)
 	}
 }
 
-
 void onUpdate(lwar::Window& window, float deltaTime)
 {
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 
-	if (scene.camera.isOpened)
+	if (camera.isOpened)
 	{
-		camFrame = scene.camera.retrieve();
+		camFrame = camera.retrieve();
 		// mirror on y axis so its like a mirror
 		cv::flip(camFrame, camFrame, 1);
 	}
@@ -116,31 +148,3 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	if (key == 256)
 		window.stop();
 }
-
-int main()
-{
-	int width = 640;
-	int height = 480;
-	std::string windowName = "Augmented Reality Test";
-
-	lwar::Window window = lwar::Window(width, height, windowName);
-	window.onUpdate = onUpdate;
-	
-	lwar::Camera camera = lwar::Camera(0, width, height);
-	camera.init();
-
-	if (!camera.isOpened)
-	{
-		getchar();
-		return -1;
-	}
-
-	window.getScene().camera = camera;
-
-	// starts the main loop
-	window.start();
-
-	return 0;
-}
-
-

@@ -12,6 +12,7 @@
 int width = 640;
 int height = 480;
 std::string windowName = "Augmented Reality Test";
+lwar::Camera camera;
 
 cv::CascadeClassifier faceCascade;
 cv::Point oldCenter;
@@ -25,7 +26,7 @@ int main()
 	lwar::Window window = lwar::Window(width, height, windowName);
 	window.onUpdate = onUpdate;
 
-	lwar::Camera camera = lwar::Camera(0, width, height);
+	camera = lwar::Camera(0, width, height);
 	camera.init();
 
 	if (!camera.isOpened)
@@ -42,8 +43,6 @@ int main()
 		return -1;
 	}
 
-	window.getScene().camera = camera;
-
 	lwar::Object3d monkey = lwar::Object3d("monkey.obj");
 	//lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
 	monkey.transform.scale = glm::vec3(0.7f, 0.7f, 0.7f);
@@ -58,7 +57,6 @@ int main()
 
 	return 0;
 }
-
 
 
 void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float deltaTime)
@@ -82,7 +80,7 @@ void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float 
 		//cv::Mat faceROI = cv::Mat(gray, faces[0]);
 		//cv::imshow("Detected Face", faceROI);
 
-		center = cv::Point(faces[0].x + faces[0].width*0.5, faces[0].y + faces[0].height*0.5);
+		center = cv::Point(faces[0].x + static_cast<int>(round(faces[0].width * 0.5)), static_cast<int>(round(faces[0].y + faces[0].height*0.5)));
 		radius = cvRound((faces[0].width + faces[0].height)*0.25);
 
 		faceFound = true;
@@ -113,7 +111,7 @@ void getFace(lwar::Window& window, lwar::Scene& scene, cv::Mat& camFrame, float 
 		monkey.transform.translation = glm::mix(monkey.transform.translation, point, 10 * deltaTime);
 
 		// set the scale to the radius so it fits the whole circle
-		monkey.transform.scale = glm::mix(monkey.transform.scale, glm::vec3(1.5f) *  window.screenToWorldDistance(radius), 2.5f * deltaTime);
+		monkey.transform.scale = glm::mix(monkey.transform.scale, glm::vec3(1.5f) * window.screenToWorldDistance(static_cast<float>(radius)), 2.5f * deltaTime);
 		oldCenter = center;
 		oldRadius = radius;
 	}
@@ -124,9 +122,9 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	lwar::Scene& scene = window.getScene();
 	cv::Mat camFrame;
 
-	if (scene.camera.isOpened)
+	if (camera.isOpened)
 	{
-		camFrame = scene.camera.retrieve();
+		camFrame = camera.retrieve();
 		// mirror on y axis so its like a mirror
 		cv::flip(camFrame, camFrame, 1);
 	}
