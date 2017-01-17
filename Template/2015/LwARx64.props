@@ -12,7 +12,7 @@
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv\x64\vc14\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\x64\lib;$(SolutionDir)ExternalLibs\openglWrappers\glew\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv\x64\vc14\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\x64\lib-vc2015;$(SolutionDir)ExternalLibs\openglWrappers\glew\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
