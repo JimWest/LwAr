@@ -288,8 +288,10 @@ namespace lwar
 		}
 
 		// set if the object is unlit or not
+		// also change to unlit if there are no normals
 		GLuint unlitId = glGetUniformLocation(standardShaderID, "unlit");
-		glUniform1i(unlitId, int(object.material.shaderType == ShaderType::Unlit));
+		float unlit = float(object.material.shaderType == ShaderType::Unlit || object.nbo <= 0);
+		glUniform1f(unlitId, unlit);
 
 		// set the light position in the shader
 		GLuint lightID = glGetUniformLocation(standardShaderID, "LightPosition_worldspace");
