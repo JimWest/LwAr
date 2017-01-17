@@ -24,8 +24,9 @@ namespace lwar
 		std::vector<glm::vec2> uvs;
 		std::vector<glm::vec3> normals;
 		bool visible = true;
-		Transform transform;
+		Transform transform;		
 		Material material;
+		// This is used by the renderer only and should not be changed.
 		uint32_t vao, vbo, uvbo, nbo;
 
 	private:

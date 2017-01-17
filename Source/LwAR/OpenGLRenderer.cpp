@@ -133,7 +133,7 @@ namespace lwar
 		initText2D("calibri.bmp");
 
 	}
-		
+
 	void OpenGLRenderer::initText2D(const char * texturePath) {
 
 		// Initialize texture
@@ -154,6 +154,18 @@ namespace lwar
 
 	void OpenGLRenderer::initObject(Object3d& object)
 	{
+		if (object.vertices.size() == 0)
+		{
+			std::cout << "Couldn't initilaize object, vertices are empty!" << std::endl;
+			return;
+		}
+
+		if (object.vertices.size() == 0)
+		{
+			std::cout << "Couldn't initilaize object, uvs are empty!" << std::endl;
+			return;
+		}
+
 		glGenVertexArrays(1, &(GLuint)object.vao);
 		glBindVertexArray((GLuint)object.vao);
 
@@ -175,14 +187,14 @@ namespace lwar
 
 	void OpenGLRenderer::preDraw()
 	{
-		quit = glfwWindowShouldClose(glfwWindow);
+		quit = (glfwWindowShouldClose(glfwWindow) != 0);
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void OpenGLRenderer::drawText(Text& text)
 	{
-		unsigned int length = strlen(text.text);
+		size_t length = strlen(text.text);
 
 		// Fill buffers
 		std::vector<glm::vec2> vertices;
@@ -250,7 +262,7 @@ namespace lwar
 		glDisable(GL_DEPTH_TEST);
 
 		// Draw call
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices.size()));
 
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
@@ -261,6 +273,12 @@ namespace lwar
 
 	void OpenGLRenderer::drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth)
 	{
+		if (object.vao <= 0 || object.vbo <= 0)
+		{
+			std::cout << "Couldn't draw object, object was not initilaized!" << std::endl;
+			return;
+		}
+
 		// Use our shader
 		glUseProgram(standardShaderID);
 
@@ -362,7 +380,7 @@ namespace lwar
 		}
 
 		// Draw the object
-		glDrawArrays(drawMode, 0, (object.vertices.size()));
+		glDrawArrays(drawMode, 0, static_cast<GLsizei>(object.vertices.size()));
 
 		if (ignoreDepth)
 			glEnable(GL_DEPTH_TEST);
@@ -408,7 +426,7 @@ namespace lwar
 		// Create the shaders
 		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		
+
 		GLint Result = GL_FALSE;
 		int InfoLogLength;
 
@@ -481,7 +499,7 @@ namespace lwar
 		// Bind to our texture handle
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		
+
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mat.cols, mat.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, flippedMat.ptr());
 
 		// texture filtering

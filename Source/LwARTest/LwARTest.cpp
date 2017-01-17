@@ -62,8 +62,6 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	// set the background of the window to the current camera image
 	window.setBackground(camFrame);
 
-	lwar::Object3d& cube = scene.objects[0];
-
 	// check for keys
 	int key = window.getLastKey();
 	// print pressed key
@@ -84,7 +82,7 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	if (key == 264)
 		movementVec.y = -1;
 
-	cube.transform.translation += movementVec * deltaTime;
+	scene.objects[0].transform.translation += movementVec * deltaTime;
 
 	// escape == exit
 	if (key == 256)
