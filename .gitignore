@@ -3,9 +3,8 @@
 /ipch
 /LwAR/opencv2
 /LwAR/Debug
-/Debug/*.pdb
 /Debug/*.exe
-/Debug/*.ilk
+*.ilk
 /.vs
 /x64
 /ExternalLibs/opencv2/sources
@@ -17,5 +16,13 @@
 /ExternalLibs/opencv2/build/x64
 /LwARTest/Debug
 /LwARTest/Release
-/LwARTest_DetectFace/Debug/*.cache
 /ExternalLibs/opencv2_old
+/Source/LwAR/x64
+/Source/LwAR/Build
+/Source/LwARTest/Debug
+/Source/LwARTest/x64
+*.idb
+*.pdb
+*.tlog
+*.cache
+*.log

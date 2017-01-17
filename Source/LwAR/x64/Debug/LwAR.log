@@ -1,6 +1,0 @@
-﻿  OpenGLRenderer.cpp
-e:\hska\master\1. semester\projektarbeit\code\lwar\source\lwar\openglrenderer.cpp(180): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-e:\hska\master\1. semester\projektarbeit\code\lwar\source\lwar\openglrenderer.cpp(188): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-e:\hska\master\1. semester\projektarbeit\code\lwar\source\lwar\openglrenderer.cpp(256): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-e:\hska\master\1. semester\projektarbeit\code\lwar\source\lwar\openglrenderer.cpp(367): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  LwAR.vcxproj -> E:\HSKA\Master\1. Semester\Projektarbeit\Code\LwAr\Source\LwAR\Build\x64\Debug\LwAR.lib
