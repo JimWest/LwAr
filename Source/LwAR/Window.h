@@ -98,7 +98,7 @@ namespace lwar
 		float zFar = 200.0f;
 		float worldCameraDist = 3.0f;
 		bool running = false;
-		int lastKey = 0;
+		int lastKey = -1;
 
 		Renderer* renderer;
 		Scene scene;

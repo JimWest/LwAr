@@ -62,8 +62,30 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	// set the background of the window to the current camera image
 	window.setBackground(camFrame);
 
+	lwar::Object3d& cube = scene.objects[0];
+
 	// check for keys
 	int key = window.getLastKey();
+	// print pressed key
+	//std::cout << std::to_string(key) << std::endl;
+
+	// 263 = left
+	// 265 = up
+	// 264 = down
+	// 262 = right
+
+	glm::vec3 movementVec = glm::vec3(0, 0, 0);
+	if (key == 263)
+		movementVec.x = -1;
+	if (key == 262)
+		movementVec.x = 1;
+	if (key == 265)
+		movementVec.y = 1;
+	if (key == 264)
+		movementVec.y = -1;
+
+	cube.transform.translation += movementVec * deltaTime;
+
 	// escape == exit
 	if (key == 256)
 		window.stop();

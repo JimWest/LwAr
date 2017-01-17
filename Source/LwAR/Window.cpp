@@ -111,7 +111,7 @@ namespace lwar
 
 	void Window::onRendererKeyInput(int key)
 	{
-		std::cout << std::to_string(key) << std::endl;
+		//std::cout << std::to_string(key) << std::endl;
 		lastKey = key;
 	}
 

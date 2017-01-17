@@ -42,7 +42,7 @@ namespace lwar
 	{
 		// callback for pressed keys, glfwGetWindowUserPointer needed cause glfw needs static functions for callbacks
 		OpenGLRenderer *renderer = static_cast<OpenGLRenderer*>(glfwGetWindowUserPointer(window));
-		if (action == GLFW_PRESS && renderer->onKeyboardInput)
+		if ((action == GLFW_PRESS || action == GLFW_REPEAT) && renderer->onKeyboardInput)
 			renderer->onKeyboardInput(key);
 		else
 			renderer->onKeyboardInput(-1);
