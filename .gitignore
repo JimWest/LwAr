@@ -28,3 +28,4 @@
 *.log
 /Build/x64/Debug/LwARTest.exe
 /Build/x64/Debug/LwARTest_DetectFace.exe
+/ExternalLibs/opencv2
