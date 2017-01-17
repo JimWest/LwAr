@@ -13,7 +13,7 @@
 
 int width = 640;
 int height = 480;
-std::string windowName = "Augmented Reality Test";
+std::string windowName = "LWAR - Detect Marker Application";
 
 int thresh = 100;
 int max_thresh = 255;

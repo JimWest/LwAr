@@ -11,7 +11,7 @@
 
 int width = 640;
 int height = 480;
-std::string windowName = "Augmented Reality Test";
+std::string windowName = "LWAR - Detect Face Application";
 lwar::Camera camera;
 
 cv::CascadeClassifier faceCascade;

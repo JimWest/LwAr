@@ -22,7 +22,7 @@ int main()
 {
 	int width = 640;
 	int height = 480;
-	std::string windowName = "Augmented Reality Test";
+	std::string windowName = "LWAR - Detect Red Circles Application";
 
 	lwar::Window window = lwar::Window(width, height, windowName);
 	window.onUpdate = onUpdate;

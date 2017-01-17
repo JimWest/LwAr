@@ -10,7 +10,7 @@
 
 int width = 640;
 int height = 480;
-std::string windowName = "Augmented Reality Test";
+std::string windowName = "LWAR - Test Application";
 lwar::Camera camera;
 
 void onUpdate(lwar::Window& window, float deltaTime);
@@ -28,7 +28,6 @@ int main()
 		return -1;
 	}
 
-	//lwar::Object3d cube = lwar::Object3d("monkey.obj");
 	lwar::Object3d cube = lwar::Object3d(lwar::Primitves::Cube);
 	cube.transform.translation = glm::vec3(-0.6f, -0.6f, 0);
 	cube.transform.scale = glm::vec3(0.4f, 0.4f, 0.4f);
