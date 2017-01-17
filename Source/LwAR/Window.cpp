@@ -1,16 +1,10 @@
-// LwAR.cpp : Defines the entry point for the console application.
-//
-
 #include  "Window.h"
 
 using namespace std;
 
-// TODO: Auto copy needed dlls into the output folder
-
-
 namespace lwar
 {
-
+	 
 	Window::Window()
 	{
 		running = false;
@@ -66,36 +60,40 @@ namespace lwar
 	{
 		scene.texts.push_back(text);
 	}
-
-	// only returns if the application should be closed
+	
 	void Window::start()
 	{
+
+		// prepare the variables for the delta time calculation
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		std::chrono::duration<float> deltaTime;
 		start = std::chrono::system_clock::now();
 
-		while (running)
+		while (running && !renderer->getShouldClose())
 		{
 			// calculate the delta time (usable for processor indipendent speed of animations etc.)
 			end = start;
 			start = std::chrono::system_clock::now();
 			deltaTime = start - end;
 
+			// optional callback to control the update
 			if (onUpdate)
 				onUpdate(*this, deltaTime.count());
 
 			renderer->preDraw();
 
-			// always render background first and ignore depth so other objects cant intercept with it
+			// always render background first and ignore depth so it will be always behind all other objects
 			if (background.visible)
 				renderer->drawObject(background, projectionMatrix, viewMatrix, true);
 
+			// render each Object out of the object list
 			for (int i = 0; i < scene.objects.size(); i++)
 			{
 				if (scene.objects.at(i).visible)
 					renderer->drawObject(scene.objects.at(i), projectionMatrix, viewMatrix, false);
 			}
 
+			// render each Text out of the object list
 			for (int i = 0; i < scene.texts.size(); i++)
 			{
 				renderer->drawText(scene.texts.at(i));				
@@ -116,7 +114,6 @@ namespace lwar
 		std::cout << std::to_string(key) << std::endl;
 		lastKey = key;
 	}
-
 
 	Renderer* Window::getRenderer() const
 	{
@@ -145,24 +142,36 @@ namespace lwar
 
 	glm::vec2 Window::worldToScreenPoint(glm::vec3 position)
 	{
-		return glm::vec2();
+		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+		//transform world to clipping coordinates
+		glm::mat4 translate = glm::translate(viewProjectionMatrix, position);
+		glm::vec4 transformedVector = translate * glm::vec4(1,1,1,1);
+		
+		int winX = (int)round(((transformedVector.x + 1) / 2.0) *
+			width);
+		//we calculate -point3D.getY() because the screen Y axis is
+		//oriented top->down 
+		int winY = (int)round(((1 - transformedVector.y) / 2.0) *
+			height);
+		return glm::vec2(winX, winY);
 	}
 
 	glm::vec3 Window::screenToWorldPoint(glm::vec2 position)
 	{
 		double x = 2.0 * position.x / width - 1;
 		double y = -2.0 * position.y / height + 1;
+
 		glm::mat4 viewProjectionInverse =
 			glm::inverse(projectionMatrix *	viewMatrix);
 
 		glm::vec4 point3D = glm::vec4(x, y, 0, 1);
 		point3D = viewProjectionInverse * point3D;
-		return  glm::vec3(point3D.x, point3D.y, 0) * worldCameraDist;
+		return glm::vec3(point3D.x, point3D.y, 0) * worldCameraDist;
 	}
 
-	float Window::screenToWorldDistance(float radius)
+	float Window::screenToWorldDistance(float distance)
 	{
-		return radius / (height / 2.0f);
+		return distance / (height / 2.0f);
 	}
 
 	float Window::worldToScreenDistance(float radius)

@@ -32,7 +32,7 @@ namespace lwar
 		OpenGLRenderer();
 		OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle, float fov = 45.0f, float zNear = 0.1f, float zFar = 200.0f, float worldCameraDist = 3.0f);
 		~OpenGLRenderer();
-
+		
 		void initObject(Object3d& object) override;
 		void preDraw() override;
 		void drawText(Text& text);
@@ -40,9 +40,7 @@ namespace lwar
 		void postDraw() override;
 		int getWindowWidth() override;
 		int getWindowHeight() override;
-
-		//std::function<void(lwar::Renderer* renderer, int key, int scancode, int action, int mods)> onKeyboardInput;
-		bool quit = false;
+		bool getShouldClose();
 
 	private:
 
@@ -64,11 +62,15 @@ namespace lwar
 		unsigned int Text2DUVBufferID;
 		unsigned int Text2DShaderID;
 		unsigned int Text2DUniformID;
+		bool quit = false;
 
+		// Initialises all the OpenGL functions. The needs to be called before any rendering can be done.
 		void initGL();
+		// inits the given font as Text
 		void initText2D(const char * texturePath);
+		// Loads the shaders out of the OpenGLShader file as a string into an OpenGL shader which will be later used for rendering.
 		GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
-		GLuint loadShaders2(const char * vertex_file_path, const char * fragment_file_path);
+		// returns the ID of the generated OpenGL Texture
 		static GLuint matToTexture(cv::Mat& mat, GLenum minFilter, GLenum magFilter, GLenum wrapFilter);
 		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void windowSizeCallback(GLFWwindow* window, int width, int height);
