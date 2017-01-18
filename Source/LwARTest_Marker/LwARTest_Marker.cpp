@@ -11,6 +11,7 @@
 #include <aruco/cvdrawingutils.h>
 
 
+
 int width = 640;
 int height = 480;
 std::string windowName = "LWAR - Detect Marker Application";
