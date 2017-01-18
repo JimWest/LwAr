@@ -2,12 +2,13 @@
 #include <vector>
 #include "Transform.h"
 #include "Material.h"
+#include "glm.hpp"
 
 namespace lwar
 {
 	enum Primitves
 	{
-		Triangle, Quad, Cube, Sphere, Cylinder
+		Triangle, Quad, Cube
 	};
 
 	class Object3d
