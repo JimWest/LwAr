@@ -24,8 +24,10 @@ int main()
 	int height = 480;
 	std::string windowName = "LWAR - Detect Red Circles Application";
 
-	lwar::Window window = lwar::Window(width, height, windowName);
+	lwar::Window window;
 	window.onUpdate = onUpdate;
+
+	window.create(width, height, windowName);
 	
 	camera = lwar::Camera(0, width, height);
 	camera.init();

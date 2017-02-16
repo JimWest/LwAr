@@ -31,8 +31,9 @@ namespace lwar
 	public:
 		OpenGLRenderer();
 		OpenGLRenderer(int windowWidth, int windowHeight, std::string windowTitle, float fov = 45.0f, float zNear = 0.1f, float zFar = 200.0f, float worldCameraDist = 3.0f);
+		OpenGLRenderer(const OpenGLRenderer&);
 		~OpenGLRenderer();
-		
+
 		void initObject(Object3d& object) override;
 		void clearObject(Object3d& object) override;
 		void preDraw() override;

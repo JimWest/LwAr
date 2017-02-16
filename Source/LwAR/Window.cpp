@@ -10,7 +10,22 @@ namespace lwar
 		running = false;
 	}
 
-	Window::Window(int width, int height, std::string title, RenderType renderType)
+	Window::Window(const Window&)
+	{
+
+	}
+
+	Window::~Window()
+	{
+		for (int i = 0; i < scene.objects.size(); i++)
+		{
+			renderer->clearObject(scene.objects.at(i));
+		}
+
+		delete(renderer);
+	}
+
+	void Window::create(int width, int height, std::string title, RenderType renderType)
 	{
 		running = true;
 
@@ -42,17 +57,6 @@ namespace lwar
 			glm::vec3(0.0f, 1.0f, 0.0f));
 
 		renderer->light.transform.translation = glm::vec3(3, 3, 3);
-	}
-
-
-	Window::~Window()
-	{
-		for (int i = 0; i < scene.objects.size(); i++)
-		{
-			renderer->clearObject(scene.objects.at(i));
-		}
-
-		delete(renderer);
 	}
 
 	void Window::addObject(Object3d& object)

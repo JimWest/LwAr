@@ -40,6 +40,11 @@ namespace lwar
 		glfwTerminate();
 	}
 
+	OpenGLRenderer::OpenGLRenderer(const OpenGLRenderer&)
+	{
+
+	}
+
 	// GLFW Callback for pressed keys, saves the key 
 	void OpenGLRenderer::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{

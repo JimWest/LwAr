@@ -34,10 +34,12 @@ namespace lwar
 	public:
 		std::function<void(lwar::Window& window, float deltaTime)> onUpdate;
 
-		//Creates a new Window which can be used for 3d augmented reality.	
-		Window();
-		Window(int width, int height, std::string title, RenderType renderType = RenderType::OpenGL);
+		Window();		
+		Window(const Window&);
 		~Window();
+
+		//Creates a new Window which can be used for 3d augmented reality.	
+		void create(int width, int height, std::string title, RenderType renderType = RenderType::OpenGL);
 
 		// Addes a new Object3d to the window which will be rendered each frame. 
 		// This needs to be called so it can be prepared for rendering.

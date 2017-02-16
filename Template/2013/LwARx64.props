@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Build\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -12,7 +12,7 @@
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\opencv\x64\vc12\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\x64\lib-vc2013;$(SolutionDir)ExternalLibs\openglWrappers\glew\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ExternalLibs\aruco\$(Configuration)\;$(SolutionDir)ExternalLibs\opencv\x64\vc12\lib;$(SolutionDir)ExternalLibs\openglWrappers\glfw\x64\lib-vc2013;$(SolutionDir)ExternalLibs\openglWrappers\glew\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
