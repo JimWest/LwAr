@@ -47,6 +47,11 @@ namespace lwar
 
 	Window::~Window()
 	{
+		for (int i = 0; i < scene.objects.size(); i++)
+		{
+			renderer->clearObject(scene.objects.at(i));
+		}
+
 		delete(renderer);
 	}
 

@@ -20,6 +20,12 @@ namespace lwar
 		// @param object The object that should be initialized.
 		virtual void initObject(Object3d& object) {};	
 
+		// Clears an Object (deleting the Buffers).
+		// This needs to be called before the renderer is deleted
+		//
+		// @param object The object that should be cleared.
+		virtual void clearObject(Object3d& object) {};
+
 		// Handles all stuff that needs to be done before actually render something
 		// like clearing the window etc. This needs to be called before rendering 
 		// objects once per frame.

@@ -31,8 +31,11 @@ namespace lwar
 		// Delete texture
 		glDeleteTextures(1, &Text2DTextureID);
 
+		glUseProgram(0);
+
 		// Delete shader
 		glDeleteProgram(Text2DShaderID);
+		glDeleteProgram(standardShaderID);
 
 		glfwTerminate();
 	}
@@ -183,6 +186,14 @@ namespace lwar
 			glBindBuffer(GL_ARRAY_BUFFER, object.nbo);
 			glBufferData(GL_ARRAY_BUFFER, object.normals.size() * sizeof(glm::vec3), &object.normals[0], GL_STATIC_DRAW);
 		}
+	}
+
+	void OpenGLRenderer::clearObject(Object3d & object)
+	{
+		glDeleteBuffers(1, &object.vao);
+		glDeleteBuffers(1, &object.vbo);
+		glDeleteBuffers(1, &object.uvbo);
+		glDeleteBuffers(1, &object.nbo);
 	}
 
 	void OpenGLRenderer::preDraw()

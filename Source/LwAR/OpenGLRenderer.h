@@ -34,6 +34,7 @@ namespace lwar
 		~OpenGLRenderer();
 		
 		void initObject(Object3d& object) override;
+		void clearObject(Object3d& object) override;
 		void preDraw() override;
 		void drawText(Text& text);
 		void drawObject(Object3d& object, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, bool ignoreDepth) override;

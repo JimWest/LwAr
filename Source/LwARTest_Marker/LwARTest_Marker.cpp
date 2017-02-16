@@ -61,23 +61,6 @@ void onUpdate(lwar::Window& window, float deltaTime)
 	cv::Mat gray;
 	cv::cvtColor(camFrame, gray, cv::COLOR_RGB2GRAY);
 	cv::equalizeHist(gray, gray);
-	//cv::Mat canny_output;
-	//std::vector<std::vector<cv::Point> > contours;
-	//std::vector<cv::Vec4i> hierarchy;
-
-	//// Detect edges using canny
-	//cv::Canny(gray, canny_output, thresh, thresh * 2, 3);
-	//// Find contours
-	//findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
-
-	//// Draw contours
-	//cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3);
-	//for (int i = 0; i< contours.size(); i++)
-	//{
-	//	cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-	//	drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
-	//}
-
 
 	MDetector.detect(gray, Markers);
 	//for each marker, draw info and its boundaries in the image
@@ -88,10 +71,11 @@ void onUpdate(lwar::Window& window, float deltaTime)
 		for (unsigned int i = 0; i < Markers.size(); i++) {
 			//cout << Markers[i] << endl;
 			Markers[i].draw(camFrame, cv::Scalar(0, 0, 255), 2);
-
+					
 			cv::Point center = Markers[i].getCenter();
 			float perimter = Markers[i].getPerimeter();
 
+			std::vector<cv::Point3f> points = Markers[i].get3DPoints(perimter);
 
 			double position[3];
 			double rotation[4];
@@ -99,7 +83,8 @@ void onUpdate(lwar::Window& window, float deltaTime)
 			Markers[i].OgreGetPoseParameters(position, rotation);
 
 
-			glm::vec3 point = window.screenToWorldPoint(glm::vec2(center.x, center.y));
+			glm::vec3 centerPoint = window.screenToWorldPoint(glm::vec2(center.x, center.y));
+			glm::vec3 pointA = window.screenToWorldPoint(glm::vec2(Markers[i][0].x, Markers[i][0].y));
 
 			if (scene.objects.size() < Markers.size())
 			{
@@ -112,7 +97,7 @@ void onUpdate(lwar::Window& window, float deltaTime)
 			lwar::Object3d& cube = scene.objects[i];
 
 			// move the object to the position of the circle
-			cube.transform.translation = point;
+			cube.transform.translation = centerPoint;
 
 			// set the scale to the radius so it fits the whole circle
 			cube.transform.scale = glm::vec3(1.0f) *  window.screenToWorldDistance(perimter / 8.0f);
@@ -122,7 +107,7 @@ void onUpdate(lwar::Window& window, float deltaTime)
 
 			//// rotate it a bit
 			//cube.transform.rotate(glm::radians(2.0f), glm::vec3(0, 1, 1));
-			cube.transform.rotation = glm::quat(rotation[0], rotation[1], rotation[2], rotation[3]);
+			//cube.transform.rotation = glm::quat(rotation[0], rotation[1], rotation[2], rotation[3]);						
 
 			cube.visible = true;
 		}
